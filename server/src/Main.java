@@ -1,5 +1,10 @@
 public class Main {
     public static void main(String[] args) {
-	    System.out.println("Hello from server");
+        if (args.length != 1) {
+            System.out.println("usage: ./server <port>");
+            return;
+        }
+        int port = Integer.parseInt(args[0]);
+        Server.run(port);
     }
 }

@@ -1,5 +1,15 @@
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-	    System.out.println("Hello from client");
+        if (args.length != 2) {
+            System.out.println("usage: ./client <serverIp> <port>");
+            return;
+        }
+        String serverIp = args[0];
+        int port = Integer.parseInt(args[1]);
+        Scanner sc = new Scanner(System.in);
+        String a = sc.next();
+        Client.run(serverIp, port);
     }
 }
