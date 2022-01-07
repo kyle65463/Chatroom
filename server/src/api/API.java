@@ -5,7 +5,6 @@ import http.HttpRequest;
 import http.HttpSender;
 
 public abstract class API {
-    public final String path = "";
-
+    public abstract String getPath();
     public abstract void handle(HttpRequest request, HttpSender sender, Database database);
 }

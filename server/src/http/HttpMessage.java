@@ -17,13 +17,13 @@ public abstract class HttpMessage {
         if(tokens.size() == 3) {
             if(requestTypes.contains(tokens.get(0))) {
                 // A request, e.g. "POST /?id=1 HTTP/1.1"
-                String requestType = tokens.get(0);
-                String path = tokens.get(1);
+                String requestType = tokens.get(0).trim();
+                String path = tokens.get(1).trim();
                 return new HttpRequest(header, body, requestType, path);
             }
             if(tokens.get(0).compareTo("HTTP/1.1") == 0) {
                 // A response, e.g. "HTTP/1.1 200 OK"
-                int status = Integer.parseInt(tokens.get(1));
+                int status = Integer.parseInt(tokens.get(1).trim());
                 return new HttpResponse(header, body, status);
             }
         }

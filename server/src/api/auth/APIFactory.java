@@ -8,7 +8,7 @@ import java.util.List;
 public class APIFactory {
     public static API getAPI(String path) {
         for(API api : apis) {
-            if(api.path.compareTo(path) == 0) {
+            if(api.getPath().compareTo(path) == 0) {
                 return api;
             }
         }

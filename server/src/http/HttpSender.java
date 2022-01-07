@@ -14,7 +14,6 @@ public class HttpSender {
     public void post(String path, String body) {
         String header = "POST " + path + " HTTP/1.1\r\n"
                 + "Host:localhost\r\nContent-Length: " + body.length() + "\r\n" + "\r\n";
-        System.out.println(header + body);
         os.print(header + body);
         os.flush();
     }
@@ -22,7 +21,7 @@ public class HttpSender {
     public void response(int status, String body) {
         String message = status == 200 ? "OK" : status == 400 ? "Bad Request" : "Server Error";
         String header = "HTTP/1.1 " + status + " " + message +"/1.1\r\n"
-                + "Host:localhost\r\nContent-Length: " + body.length() + "\r\n";
+                + "Host:localhost\r\nContent-Length: " + body.length() + "\r\n" + "\r\n";
         os.print(header + body);
         os.flush();
     }

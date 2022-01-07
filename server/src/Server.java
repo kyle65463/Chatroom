@@ -49,9 +49,11 @@ class ServerThread extends Thread {
 
             while(true) {
                 HttpMessage message = receiver.readMessage();
+                System.out.println("Get request");
                 if(message instanceof HttpRequest request) {
                     API api = APIFactory.getAPI(request.path);
                     api.handle(request, sender, database);
+                    System.out.println("Send response");
                 }
                 else {
                     System.out.println("Http error");

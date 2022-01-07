@@ -22,7 +22,6 @@ public class HttpReceiver {
         String line = is.readLine();
         while(line.length() != 0) {
             List<String> tokens = Arrays.asList(line.split(":", 2));
-            System.out.println(tokens);
             if (tokens.size() == 2) {
                 String key = tokens.get(0).trim();
                 String value = tokens.get(1).trim();

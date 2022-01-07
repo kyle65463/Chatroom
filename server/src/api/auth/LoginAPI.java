@@ -12,7 +12,10 @@ import utils.JsonUtils;
 import java.util.Map;
 
 public class LoginAPI extends API {
-    public final String path = "/login";
+    @Override
+    public String getPath() {
+        return "/login";
+    }
 
     @Override
     public void handle(HttpRequest request, HttpSender sender, Database database) {
@@ -30,8 +33,8 @@ public class LoginAPI extends API {
             return;
         }
 
-        String token = generateJWTToken(user.id);
-        sender.response(200, JsonUtils.toJson(new Response(token, user)));
+        String authToken = generateJWTToken(user.id);
+        sender.response(200, JsonUtils.toJson(new Response(authToken, user)));
     }
 
     private String generateJWTToken(String userId) {
@@ -43,11 +46,11 @@ public class LoginAPI extends API {
 }
 
 class Response {
-    public Response(String token, User user) {
-        this.token = token;
+    public Response(String authToken, User user) {
+        this.authToken = authToken;
         this.user = user;
     }
 
-    public final String token;
+    public final String authToken;
     public final User user;
 }
