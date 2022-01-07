@@ -7,16 +7,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import models.User;
-import utils.JsonUtils;
 
 import java.io.IOException;
-import java.net.*;
-import java.net.http.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 
 public class Firestore extends Database {
     public static void init() throws IOException {

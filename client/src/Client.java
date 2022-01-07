@@ -1,3 +1,6 @@
+import http.HttpReceiver;
+import http.HttpSender;
+
 import java.io.*;
 import java.net.*;
 
@@ -7,8 +10,8 @@ public class Client {
             InetAddress address = InetAddress.getLocalHost();
             Socket socket = new Socket(serverIp, port); // You can use static final constant PORT_NUM
             BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-            BufferedReader is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter os = new PrintWriter(socket.getOutputStream());
+            HttpSender sender = new HttpSender(socket);
+            HttpReceiver receiver = new HttpReceiver(socket);
 
             System.out.println("Client address: " + address);
             System.out.println("Enter data to echo Server (Enter QUIT to end):");
@@ -16,10 +19,7 @@ public class Client {
             try {
                 String line = stdin.readLine();
                 while (line.compareTo("QUIT") != 0) {
-                    os.println(line);
-                    os.flush();
-                    String response = is.readLine();
-                    System.out.println("Server Response : " + response);
+                    sender.post("/", line);
                     line = stdin.readLine();
                 }
             } catch (IOException e) {

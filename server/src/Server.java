@@ -1,5 +1,9 @@
 import database.Database;
 import database.Firestore;
+import http.HttpMessage;
+import http.HttpReceiver;
+import http.HttpRequest;
+import http.HttpSender;
 import models.User;
 
 import java.io.*;
@@ -36,53 +40,24 @@ class ServerThread extends Thread {
     }
 
     public void run() {
-        Database database = new Firestore();
         try {
-            BufferedReader is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter os = new PrintWriter(socket.getOutputStream());
-            try {
-                String line = is.readLine();
-                while (line.compareTo("QUIT") != 0) {
-                    if(line.compareTo("create") == 0) {
-                        os.println("enter username");
-                        os.flush();
-                        String username = is.readLine();
-                        os.println("enter password");
-                        os.flush();
-                        String password = is.readLine();
-                        os.println("enter display name");
-                        os.flush();
-                        String displayName = is.readLine();
-                        User user = database.createUser(username, password, displayName);
-                        if(user != null) {
-                            os.println("create user successfully");
-                            os.flush();
-                        }
-                        else {
-                            os.println("create user failed");
-                            os.flush();
-                        }
-                    }
-                    os.println(line);
-                    os.flush();
-                    System.out.println("Response to Client  :  " + line);
-                    line = is.readLine();
+            Database database = new Firestore();
+            HttpSender sender = new HttpSender(socket);
+            HttpReceiver receiver = new HttpReceiver(socket);
+
+            while(true) {
+                HttpMessage message = receiver.readMessage();
+                if(message instanceof HttpRequest) {
+                    System.out.println(message.body);
                 }
-            } catch (IOException e) {
-                System.out.println("IO Error/ Client " + this.getName() + " terminated abruptly");
-            } catch (NullPointerException e) {
-                System.out.println("Client " + this.getName() + " Closed");
-            } finally {
-                try {
-                    System.out.println("Closing connection...");
-                    is.close();
-                    os.close();
-                    socket.close();
-                } catch (IOException ie) {
-                    System.out.println("Socket Close Error");
+                else {
+                    System.out.println("Http error");
                 }
+
             }
+
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Server thread error");
         }
     }
