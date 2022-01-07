@@ -1,3 +1,7 @@
+import database.Database;
+import database.Firestore;
+import models.User;
+
 import java.io.*;
 import java.net.*;
 
@@ -25,19 +29,40 @@ public class Server {
 }
 
 class ServerThread extends Thread {
-    private Socket socket;
+    private final Socket socket;
 
     public ServerThread(Socket socket) {
         this.socket = socket;
     }
 
     public void run() {
+        Database database = new Firestore();
         try {
             BufferedReader is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter os = new PrintWriter(socket.getOutputStream());
             try {
                 String line = is.readLine();
                 while (line.compareTo("QUIT") != 0) {
+                    if(line.compareTo("create") == 0) {
+                        os.println("enter username");
+                        os.flush();
+                        String username = is.readLine();
+                        os.println("enter password");
+                        os.flush();
+                        String password = is.readLine();
+                        os.println("enter display name");
+                        os.flush();
+                        String displayName = is.readLine();
+                        User user = database.createUser(username, password, displayName);
+                        if(user != null) {
+                            os.println("create user successfully");
+                            os.flush();
+                        }
+                        else {
+                            os.println("create user failed");
+                            os.flush();
+                        }
+                    }
                     os.println(line);
                     os.flush();
                     System.out.println("Response to Client  :  " + line);
@@ -52,9 +77,7 @@ class ServerThread extends Thread {
                     System.out.println("Closing connection...");
                     is.close();
                     os.close();
-                    if (socket != null) {
-                        socket.close();
-                    }
+                    socket.close();
                 } catch (IOException ie) {
                     System.out.println("Socket Close Error");
                 }
