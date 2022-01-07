@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Server" type="Application" factoryName="Application">
+    <envs>
+      <env name="GOOGLE_APPLICATION_CREDENTIALS" value="C:\dev\chatroom-ece98-firebase-adminsdk-4sox3-91bc9d4a23.json" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="Main" />
+    <module name="server" />
+    <option name="PROGRAM_PARAMETERS" value="9998" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
