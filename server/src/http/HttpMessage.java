@@ -1,5 +1,7 @@
 package http;
 
+import utils.JsonUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +9,7 @@ import java.util.Map;
 public abstract class HttpMessage {
     protected HttpMessage(Map<String, String> header, String body) {
         this.header = header;
-        this.body = body;
+        this.body = JsonUtils.jsonToMap(body);
     }
 
     public static HttpMessage parse(String startLine, Map<String, String> header, String body) {
@@ -29,6 +31,6 @@ public abstract class HttpMessage {
     }
 
     public final Map<String, String> header;
-    public final String body;
+    public final Map<String, Object> body;
     private static final List<String> requestTypes = Arrays.asList("GET", "POST");
 }

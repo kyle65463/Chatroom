@@ -1,3 +1,5 @@
+import api.API;
+import api.auth.APIFactory;
 import database.Database;
 import database.Firestore;
 import http.HttpMessage;
@@ -47,8 +49,9 @@ class ServerThread extends Thread {
 
             while(true) {
                 HttpMessage message = receiver.readMessage();
-                if(message instanceof HttpRequest) {
-                    System.out.println(message.body);
+                if(message instanceof HttpRequest request) {
+                    API api = APIFactory.getAPI(request.path);
+                    api.handle(request, sender, database);
                 }
                 else {
                     System.out.println("Http error");

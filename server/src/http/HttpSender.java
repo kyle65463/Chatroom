@@ -20,7 +20,7 @@ public class HttpSender {
     }
 
     public void response(int status, String body) {
-        String message = status == 200 ? "OK" : "Bad Request";
+        String message = status == 200 ? "OK" : status == 400 ? "Bad Request" : "Server Error";
         String header = "HTTP/1.1 " + status + " " + message +"/1.1\r\n"
                 + "Host:localhost\r\nContent-Length: " + body.length() + "\r\n";
         os.print(header + body);
