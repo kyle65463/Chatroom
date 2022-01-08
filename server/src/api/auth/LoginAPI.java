@@ -30,8 +30,10 @@ public class LoginAPI extends API {
 
         User user;
         try {
+            System.out.println("username " + username);
+            System.out.println("password " + password);
             user = database.getUser(username, password);
-            String authToken = generateJWTToken(user.id);
+            String authToken = generateJWTToken(user.username);
             sender.response(200, JsonUtils.toJson(new LoginAPIResponse(authToken, user)));
         }
         catch (Exception e) {
@@ -39,13 +41,6 @@ public class LoginAPI extends API {
             output.put("error", e.getMessage());
             sender.response(400, JsonUtils.toJson(output));
         }
-    }
-
-    private String generateJWTToken(String userId) {
-        Algorithm algorithm = Algorithm.HMAC256("secret");
-        return JWT.create()
-                .withClaim("userId", userId)
-                .sign(algorithm);
     }
 }
 

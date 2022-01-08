@@ -6,6 +6,7 @@ import http.HttpReceiver;
 import http.HttpResponse;
 import http.HttpSender;
 import models.Auth;
+import models.Friend;
 import utils.JsonUtils;
 import utils.Scanner;
 
@@ -23,13 +24,16 @@ public class AddFriend extends HomeAction {
             username = Scanner.instance.nextLine();
         }
         params.put("username", username.trim());
-        sender.post("/friends", JsonUtils.toJson(params), auth.authToken);
+        sender.post("/friends/add", JsonUtils.toJson(params), auth.authToken);
 
         try {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
                     System.out.println("Added successfully");
+                    System.out.println("");
+                    Friend friend = new Friend((Map<String, Object>) response.body.get("friend"));
+                    auth.user.friends.add(friend);
                 }
                 else {
                     // Request failed

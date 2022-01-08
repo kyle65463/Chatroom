@@ -1,6 +1,7 @@
 package api;
 
 import api.auth.*;
+import api.friends.AddFriendAPI;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,5 +16,9 @@ public class APIFactory {
         return new NotFound();
     }
 
-    private static final List<API> apis = Arrays.asList(new LoginAPI(), new RegisterAPI(), new NotFound());
+    private static final List<API> apis = Arrays.asList(
+            new LoginAPI(), new RegisterAPI(),
+            new AddFriendAPI(),
+            new NotFound()
+    );
 }

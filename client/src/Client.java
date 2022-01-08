@@ -37,7 +37,7 @@ public class Client {
                         else {
                             // Default login to home page
                             System.out.println("");
-                            System.out.println("Welcome, " + auth.user.displayName);
+                            System.out.println("Welcome, " + auth.user.displayName + "!");
                             pathStack.clear();
                             pathStack.push("home");
                         }

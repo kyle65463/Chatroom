@@ -13,7 +13,7 @@ public class ListFriend extends HomeAction {
             System.out.println("No friends");
         }
         for(Friend friend : auth.user.friends) {
-            System.out.println(friend.displayName + "(" + friend.username + ")");
+            System.out.println(friend.displayName + " (" + friend.username + ")");
         }
         System.out.println("");
     }
