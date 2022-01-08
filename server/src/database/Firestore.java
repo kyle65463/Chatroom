@@ -9,6 +9,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import models.User;
 
 import java.io.IOException;
+import java.security.spec.ECField;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,12 @@ public class Firestore extends Database {
         db = FirestoreClient.getFirestore();
     }
 
-    public User createUser(String displayName, String username, String password) {
+    public User createUser(String displayName, String username, String password) throws Exception {
+        // Check if user exists
+        Query query = db.collection("users").whereEqualTo("username", username);
+        if(query.get().get().getDocuments().size() > 0) throw new Exception("Username exists.");
+
+        // Create the user
         try {
             Map<String, Object> userData = new HashMap<>();
             userData.put("displayName", displayName);
@@ -35,12 +41,11 @@ public class Firestore extends Database {
             return new User(id, username, displayName, password);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new Exception("Create user error.");
         }
     }
 
-    public User getUser(String username, String password)  {
+    public User getUser(String username, String password) throws Exception  {
         try {
             Query query = db.collection("users")
                     .whereEqualTo("username", username)
@@ -52,13 +57,16 @@ public class Firestore extends Database {
                 String id = doc.getId();
                 String displayName = doc.getString("displayName");
                 return new User(id, username, displayName, password);
+
             }
-            return null;
         }
         catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            if(e.getMessage().compareTo("Username or password incorrect.") == 0)
+            throw new Exception("Login error.");
         }
+
+        // User not found
+        throw new Exception("Username or password incorrect.");
     }
 
     private static com.google.cloud.firestore.Firestore db;

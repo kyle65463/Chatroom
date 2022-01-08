@@ -1,14 +1,12 @@
 import api.API;
-import api.auth.APIFactory;
+import api.APIFactory;
 import database.Database;
 import database.Firestore;
 import http.HttpMessage;
 import http.HttpReceiver;
 import http.HttpRequest;
 import http.HttpSender;
-import models.User;
 
-import java.io.*;
 import java.net.*;
 
 public class Server {

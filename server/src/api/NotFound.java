@@ -1,4 +1,4 @@
-package api.auth;
+package api;
 
 import api.API;
 import database.Database;

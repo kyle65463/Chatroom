@@ -11,7 +11,7 @@ import utils.Scanner;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends Action {
+public class Register extends Action {
     public String perform(HttpSender sender, HttpReceiver receiver) {
         System.out.println("Enter username:");
         String username = Scanner.instance.nextLine();
@@ -27,10 +27,17 @@ public class Login extends Action {
             password = Scanner.instance.nextLine();
         }
 
+        System.out.println("Enter displayName (optional): ");
+        String displayName = Scanner.instance.nextLine();
+        if(displayName.trim().length() == 0) {
+            displayName = username;
+        }
+
         Map<String, String> params = new HashMap<>();
         params.put("username", username.trim());
         params.put("password", password.trim());
-        sender.post("/login", JsonUtils.toJson(params));
+        params.put("displayName", displayName.trim());
+        sender.post("/register", JsonUtils.toJson(params));
 
         try {
             HttpMessage message = receiver.readMessage();

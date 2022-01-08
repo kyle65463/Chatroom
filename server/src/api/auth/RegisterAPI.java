@@ -12,10 +12,10 @@ import utils.JsonUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginAPI extends API {
+public class RegisterAPI extends API {
     @Override
     public String getPath() {
-        return "/login";
+        return "/register";
     }
 
     @Override
@@ -23,16 +23,16 @@ public class LoginAPI extends API {
         Map<String, Object> body = request.body;
         String username = (String) body.get("username");
         String password = (String) body.get("password");
-        if(username == null || password == null) {
+        String displayName = (String) body.get("password");
+        if(username == null || password == null || displayName == null) {
             sender.response(400, "Incorrect request format.");
             return;
         }
 
-        User user;
         try {
-            user = database.getUser(username, password);
+            User user = database.createUser(displayName, username, password);
             String authToken = generateJWTToken(user.id);
-            sender.response(200, JsonUtils.toJson(new LoginAPIResponse(authToken, user)));
+            sender.response(200, JsonUtils.toJson(new RegisterAPIResponse(authToken, user)));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
@@ -49,8 +49,8 @@ public class LoginAPI extends API {
     }
 }
 
-class LoginAPIResponse {
-    public LoginAPIResponse(String authToken, User user) {
+class RegisterAPIResponse {
+    public RegisterAPIResponse(String authToken, User user) {
         this.authToken = authToken;
         this.user = user;
     }

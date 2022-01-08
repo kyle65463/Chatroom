@@ -1,6 +1,6 @@
-package api.auth;
+package api;
 
-import api.API;
+import api.auth.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,5 +15,5 @@ public class APIFactory {
         return new NotFound();
     }
 
-    private static final List<API> apis = Arrays.asList(new LoginAPI(), new NotFound());
+    private static final List<API> apis = Arrays.asList(new LoginAPI(), new RegisterAPI(), new NotFound());
 }
