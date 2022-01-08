@@ -10,7 +10,7 @@ import utils.JsonUtils;
 import utils.Scanner;
 
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 public class AddFriend extends Action {

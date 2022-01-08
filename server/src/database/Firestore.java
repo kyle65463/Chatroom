@@ -6,10 +6,12 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import models.Friend;
 import models.User;
+import utils.JsonUtils;
 
 import java.io.IOException;
-import java.security.spec.ECField;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +37,11 @@ public class Firestore extends Database {
             userData.put("displayName", displayName);
             userData.put("username", username);
             userData.put("password", password);
+            userData.put("friends", new ArrayList<>());
             ApiFuture<DocumentReference> future = db.collection("users").add(userData);
             DocumentReference doc = future.get();
             String id = doc.getId();
-            return new User(id, username, displayName, password);
+            return new User(id, username, displayName, password, new ArrayList<>());
         }
         catch (Exception e) {
             throw new Exception("Create user error.");
@@ -56,8 +59,15 @@ public class Firestore extends Database {
                 QueryDocumentSnapshot doc = documents.get(0);
                 String id = doc.getId();
                 String displayName = doc.getString("displayName");
-                return new User(id, username, displayName, password);
-
+                List<Friend> friends = new ArrayList<>();
+                List<Map<String, String>> rawFriends = (List<Map<String, String>>) doc.get("friends");
+                assert rawFriends != null;
+                for(Map<String, String> friend : rawFriends) {
+                    String friendDisplayName = friend.get("displayName");
+                    String friendUsername = friend.get("username");
+                    friends.add(new Friend(friendUsername, friendDisplayName));
+                }
+                return new User(id, username, displayName, password, friends);
             }
         }
         catch (Exception e) {
@@ -67,6 +77,11 @@ public class Firestore extends Database {
 
         // User not found
         throw new Exception("Username or password incorrect.");
+    }
+
+    public void updateUser(User user) throws Exception {
+        ApiFuture<WriteResult> result = db.collection("user").document(user.id).set(JsonUtils.jsonToMap(JsonUtils.toJson(user)));
+        result.get();
     }
 
     private static com.google.cloud.firestore.Firestore db;
