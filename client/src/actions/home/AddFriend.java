@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 import java.util.Map;
 
-public class AddFriend extends Action {
+public class AddFriend extends HomeAction {
     public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
         Map<String, String> params = new HashMap<>();
         System.out.println("Enter friend's username:");

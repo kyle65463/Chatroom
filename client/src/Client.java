@@ -2,9 +2,11 @@ import actions.Action;
 import actions.auth.AuthAction;
 import actions.auth.Login;
 import actions.auth.Register;
+import actions.home.HomeAction;
 import http.HttpReceiver;
 import http.HttpSender;
 import models.Auth;
+import models.Friend;
 import utils.Scanner;
 
 import java.io.*;
@@ -34,7 +36,8 @@ public class Client {
                         }
                         else {
                             // Default login to home page
-                            System.out.println("Welcome");
+                            System.out.println("");
+                            System.out.println("Welcome, " + auth.user.displayName);
                             pathStack.clear();
                             pathStack.push("home");
                         }
@@ -42,7 +45,8 @@ public class Client {
 
                     String path = "/" + String.join("/", pathStack);
                     if(path.compareTo("/home") == 0) {
-
+                        HomeAction action = HomeAction.getAction();
+                        action.perform(auth, sender, receiver);
                     }
 
                 }

@@ -1,6 +1,7 @@
 package database;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
 import com.google.firebase.FirebaseApp;
@@ -59,14 +60,8 @@ public class Firestore extends Database {
                 QueryDocumentSnapshot doc = documents.get(0);
                 String id = doc.getId();
                 String displayName = doc.getString("displayName");
-                List<Friend> friends = new ArrayList<>();
-                List<Map<String, String>> rawFriends = (List<Map<String, String>>) doc.get("friends");
-                assert rawFriends != null;
-                for(Map<String, String> friend : rawFriends) {
-                    String friendDisplayName = friend.get("displayName");
-                    String friendUsername = friend.get("username");
-                    friends.add(new Friend(friendUsername, friendDisplayName));
-                }
+                List<String> friendUsernames = (List<String>) doc.get("friends");
+                List<Friend> friends = getFriends(friendUsernames);
                 return new User(id, username, displayName, password, friends);
             }
         }
@@ -77,6 +72,24 @@ public class Firestore extends Database {
 
         // User not found
         throw new Exception("Username or password incorrect.");
+    }
+
+    public List<Friend> getFriends(List<String> usernames) throws Exception  {
+        try {
+            Query query = db.collection("users").whereIn("username", usernames);
+            QuerySnapshot querySnapshot = query.get().get();
+            List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+            List<Friend> friends = new ArrayList<>();
+            for (QueryDocumentSnapshot doc : documents) {
+                String displayName = doc.getString("displayName");
+                String username = doc.getString("username");
+                friends.add(new Friend(username, displayName));
+            }
+            return friends;
+        }
+        catch (Exception e) {
+            throw new Exception("Get friend list error.");
+        }
     }
 
     public void updateUser(User user) throws Exception {

@@ -23,8 +23,8 @@ public class RegisterAPI extends API {
         Map<String, Object> body = request.body;
         String username = (String) body.get("username");
         String password = (String) body.get("password");
-        String displayName = (String) body.get("password");
-        if(username == null || password == null || displayName == null) {
+        String displayName = (String) body.get("displayName");
+        if(username == null || password == null) {
             sender.response(400, "Incorrect request format.");
             return;
         }

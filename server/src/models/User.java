@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,11 @@ public class User {
         this.username =(String) map.get("username");
         this.displayName = (String) map.get("displayName");
         this.password = (String) map.get("password");
-        this.friends = (List<Friend>) map.get("friends");
+        this.friends = new ArrayList<>();
+        List<Map<String, Object>> rawFriends = (List<Map<String, Object>>) map.get("friends");
+        for(Map<String, Object> rawFriend : rawFriends) {
+            this.friends.add(new Friend(rawFriend));
+        }
     }
 
     public String id;
@@ -25,14 +30,4 @@ public class User {
     public String displayName;
     public String password;
     public List<Friend> friends;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", displayName='" + displayName + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
 }

@@ -12,14 +12,17 @@ public abstract class AuthAction extends Action {
     public static AuthAction getCommand() {
         System.out.println("(1) Login");
         System.out.println("(2) Register");
-        try {
-            int command = Integer.parseInt(Scanner.instance.nextLine());
-            if (command == 2) {
-                return new Register();
+        while (true) {
+            try {
+                int command = Integer.parseInt(Scanner.instance.nextLine());
+                if (command == 1) {
+                    return new Login();
+                }
+                if (command == 2) {
+                    return new Register();
+                }
+            } catch (Exception ignored) {
             }
         }
-        catch (Exception ignored) {
-        }
-        return new Login();
     }
 }
