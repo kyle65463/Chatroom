@@ -10,10 +10,10 @@ import utils.JsonUtils;
 
 import java.util.*;
 
-public class AddFriendAPI extends API {
+public class DeleteFriendAPI extends API {
     @Override
     public String getPath() {
-        return "/friends/add";
+        return "/friends/delete";
     }
 
     @Override
@@ -33,30 +33,20 @@ public class AddFriendAPI extends API {
             return;
         }
 
-        // Check if already have the same friend
-        for(Friend friend : user.friends) {
-            if(friend.username.compareTo(username) == 0) {
-                sender.response(400, "You already have this friend.");
-                return;
-            }
+        // Remove friend and check if not have the friend
+        int originalNumFriends = user.friends.size();
+        user.friends.removeIf(friend -> friend.username.compareTo(username) == 0);
+        if(originalNumFriends == user.friends.size()) {
+            sender.response(400, "You don't have this friend.");
+            return;
         }
 
         try {
-            // Add friend to user
-            List<Friend> newFriends = database.getFriends(Collections.singletonList(username));
-            if(newFriends.size() == 0) {
-                sender.response(400, "User not found.");
-                return;
-            }
-            Friend newFriend = newFriends.get(0);
-            user.friends.add(newFriend);
-
             // Update user
             List<String> friendUsernames = user.friends.stream().map(friend -> friend.username).toList();
             Map<String, Object> update = new HashMap<>();
             update.put("friends", friendUsernames);
             database.updateUser(user, update);
-
             sender.response(200, JsonUtils.toJson(new FriendsAPIResponse(user.friends)));
         }
         catch (Exception e) {
@@ -66,4 +56,3 @@ public class AddFriendAPI extends API {
         }
     }
 }
-

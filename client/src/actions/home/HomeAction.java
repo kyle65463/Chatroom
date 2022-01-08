@@ -15,7 +15,8 @@ public abstract class HomeAction {
         System.out.println("Home:");
         System.out.println("(1) List friends");
         System.out.println("(2) Add a friend");
-        System.out.println("(3) Check account info");
+        System.out.println("(3) Delete a friend");
+        System.out.println("(4) Check account info");
         while (true) {
             try {
                 int command = Integer.parseInt(Scanner.instance.nextLine());
@@ -26,6 +27,9 @@ public abstract class HomeAction {
                     return new AddFriend();
                 }
                 if (command == 3) {
+                    return new DeleteFriend();
+                }
+                if (command == 4) {
                     return new CheckUserInfo();
                 }
             } catch (Exception ignored) {

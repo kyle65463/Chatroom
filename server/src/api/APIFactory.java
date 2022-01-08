@@ -2,6 +2,7 @@ package api;
 
 import api.auth.*;
 import api.friends.AddFriendAPI;
+import api.friends.DeleteFriendAPI;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +19,7 @@ public class APIFactory {
 
     private static final List<API> apis = Arrays.asList(
             new LoginAPI(), new RegisterAPI(),
-            new AddFriendAPI(),
+            new AddFriendAPI(), new DeleteFriendAPI(),
             new NotFound()
     );
 }

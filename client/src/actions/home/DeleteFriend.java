@@ -1,6 +1,5 @@
 package actions.home;
 
-import actions.Action;
 import http.HttpMessage;
 import http.HttpReceiver;
 import http.HttpResponse;
@@ -11,11 +10,10 @@ import utils.JsonUtils;
 import utils.Scanner;
 
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
 
-public class AddFriend extends HomeAction {
+public class DeleteFriend extends HomeAction {
     public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
         Map<String, String> params = new HashMap<>();
         System.out.println("Enter friend's username:");
@@ -25,16 +23,16 @@ public class AddFriend extends HomeAction {
             username = Scanner.instance.nextLine();
         }
         params.put("username", username.trim());
-        sender.post("/friends/add", JsonUtils.toJson(params), auth.authToken);
+        sender.post("/friends/delete", JsonUtils.toJson(params), auth.authToken);
 
         try {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
-                    System.out.println("Added successfully");
-                    System.out.println("");
                     List<Map<String, Object>> rawFriends = (List<Map<String, Object>>) response.body.get("friends");
                     auth.user.friends = rawFriends.stream().map(Friend::new).toList();
+                    System.out.println("Deleted successfully");
+                    System.out.println("");
                 }
                 else {
                     // Request failed
