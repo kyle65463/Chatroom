@@ -5,14 +5,15 @@ import http.HttpMessage;
 import http.HttpReceiver;
 import http.HttpResponse;
 import http.HttpSender;
+import models.Auth;
 import utils.JsonUtils;
 import utils.Scanner;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends Action {
-    public String perform(HttpSender sender, HttpReceiver receiver) {
+public class Login extends AuthAction {
+    public Auth perform(HttpSender sender, HttpReceiver receiver) {
         System.out.println("Enter username:");
         String username = Scanner.instance.nextLine();
         while(username.trim().length() == 0) {
@@ -36,7 +37,7 @@ public class Login extends Action {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
-                    return (String) response.body.get("authToken");
+                    return new Auth(response.body);
                 }
                 else {
                     // Request failed

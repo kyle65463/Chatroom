@@ -1,12 +1,15 @@
 import actions.Action;
+import actions.auth.AuthAction;
 import actions.auth.Login;
 import actions.auth.Register;
 import http.HttpReceiver;
 import http.HttpSender;
+import models.Auth;
 import utils.Scanner;
 
 import java.io.*;
 import java.net.*;
+import java.util.Stack;
 
 public class Client {
     public static void run(String serverIp, int port) {
@@ -15,32 +18,36 @@ public class Client {
             Socket socket = new Socket(serverIp, port);
             HttpSender sender = new HttpSender(socket);
             HttpReceiver receiver = new HttpReceiver(socket);
-            System.out.println("Client address: " + address);
+            System.out.println("Connected to server!");
 
             try {
-                String authToken = null;
-                while(authToken == null) {
-                    System.out.println("(1) Login");
-                    System.out.println("(2) Register");
-                    int command = Integer.parseInt(Scanner.instance.nextLine());
-
-                    Action action = new Login();
-                    if(command == 2) {
-                        action = new Register();
+                // Handle commands
+                Auth auth = null;
+                Stack<String> pathStack = new Stack<String>();
+                while(true) {
+                    if (auth == null) {
+                        AuthAction action = AuthAction.getCommand();
+                        auth = action.perform(sender, receiver);
+                        if (auth == null) {
+                            // Auth failed
+                            System.out.println("Try again");
+                        }
+                        else {
+                            // Default login to home page
+                            pathStack.clear();
+                            pathStack.push("home");
+                        }
                     }
-                    authToken = action.perform(sender, receiver);
-                    if(authToken == null) {
-                        System.out.println("Try again");
+
+                    String path = "/" + String.join("/", pathStack);
+                    if(path.compareTo("/home") == 0) {
+
                     }
                 }
-                System.out.println("Successful");
-                System.out.println(authToken);
             } catch (Exception e) {
-                System.out.println("Socket read Error");
                 e.printStackTrace();
             }
         } catch (IOException e) {
-            System.out.print("IO Exception");
             e.printStackTrace();
         }
     }
