@@ -43,6 +43,7 @@ public class Client {
                     if(path.compareTo("/home") == 0) {
 
                     }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

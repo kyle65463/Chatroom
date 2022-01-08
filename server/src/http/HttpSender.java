@@ -11,9 +11,28 @@ public class HttpSender {
 
     private final PrintWriter os;
 
+    public void get(String path, String body, String authToken) {
+        request(path, body, "GET", authToken);
+    }
+
+    public void delete(String path, String body, String authToken) {
+        request(path, body, "DELETE", authToken);
+    }
+
+    public void post(String path, String body, String authToken) {
+        request(path, body, "POST", authToken);
+    }
+
     public void post(String path, String body) {
-        String header = "POST " + path + " HTTP/1.1\r\n"
-                + "Host:localhost\r\nContent-Length: " + body.length() + "\r\n" + "\r\n";
+        request(path, body, "POST", "");
+    }
+
+    private void request(String path, String body, String requestType, String authToken) {
+        String header = requestType + " " + path + " HTTP/1.1\r\n" +
+                        "Host:localhost\r\n" +
+                        "Content-Length: " + body.length() + "\r\n" +
+                        (authToken.length() > 0 ? "Authorization: " + authToken + "\r\n" : "") +
+                        "\r\n";
         os.print(header + body);
         os.flush();
     }
