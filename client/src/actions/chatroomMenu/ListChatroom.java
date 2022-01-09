@@ -9,12 +9,25 @@ import models.Auth;
 import models.Chatroom;
 import utils.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ListChatroom extends VoidAction {
+    public ListChatroom() {
+        this.showIndex = false;
+    }
+
+    public ListChatroom(boolean showIndex) {
+        this.showIndex = showIndex;
+    }
+
     public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
+        getChatroomList(auth, sender, receiver);
+    }
+
+    public List<Chatroom> getChatroomList(Auth auth, HttpSender sender, HttpReceiver receiver) {
         sender.post("/chatroom/list", JsonUtils.toJson(new HashMap<>()), auth.authToken);
 
         try {
@@ -27,10 +40,17 @@ public class ListChatroom extends VoidAction {
                     if(chatrooms.size() == 0) {
                         System.out.println("No chat rooms");
                     }
+                    int i = 1;
                     for(Chatroom chatroom : chatrooms) {
-                        System.out.println(chatroom.name + " (" + chatroom .usernames.size() + " users)");
+                        String prefix = "";
+                        if(showIndex) {
+                            prefix = "(" + i + ") ";
+                        }
+                        System.out.println(prefix + chatroom.name + " (" + chatroom .usernames.size() + " users)");
+                        i++;
                     }
                     System.out.println("");
+                    return chatrooms;
                 }
                 else {
                     // Request failed
@@ -40,5 +60,8 @@ public class ListChatroom extends VoidAction {
         }
         catch (Exception ignored) {
         }
+        return new ArrayList<>();
     }
+
+    private final boolean showIndex;
 }

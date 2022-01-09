@@ -16,7 +16,7 @@ public abstract class ChatroomMenuActionFactory {
             System.out.println("(1) List chat rooms");
             System.out.println("(2) Create a chat room");
             System.out.println("(3) Join to an existing chat room");
-            System.out.println("(4) Choose a chat room to chat");
+            System.out.println("(4) Enter a chat room");
             System.out.println("(5) Back");
             try {
                 int command = Integer.parseInt(Scanner.instance.nextLine());
@@ -30,7 +30,7 @@ public abstract class ChatroomMenuActionFactory {
                     return new JoinChatroom();
                 }
                 if (command == 4) {
-                    return new CheckUserInfo();
+                    return new EnterChatroom();
                 }
                 if (command == 5) {
                     return new GoBack();

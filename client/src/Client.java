@@ -54,7 +54,7 @@ public class Client {
                         voidAction.perform(auth, sender, receiver);
                     }
                     else if(action instanceof PathAction pathAction) {
-                        pathAction.perform(pathStack);
+                        pathAction.perform(pathStack, auth, sender, receiver);
                     }
                     else if(action instanceof AuthAction authAction) {
                         auth = authAction.perform(sender, receiver);
