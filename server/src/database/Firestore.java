@@ -33,14 +33,15 @@ public class Firestore extends Database {
         // Create the user
         try {
             Map<String, Object> userData = new HashMap<>();
+            String id = UUID.randomUUID().toString();
+            userData.put("id", id);
             userData.put("displayName", displayName);
             userData.put("username", username);
             userData.put("password", password);
             userData.put("friends", new ArrayList<>());
             userData.put("chatroomIds", new ArrayList<>());
-            ApiFuture<DocumentReference> future = db.collection("users").add(userData);
-            DocumentReference doc = future.get();
-            String id = doc.getId();
+            ApiFuture<WriteResult> future = db.collection("users").document(id).set(userData);
+            future.get();
             return new User(id, username, displayName, password, new ArrayList<>(), new ArrayList<>());
         }
         catch (Exception e) {
@@ -58,12 +59,11 @@ public class Firestore extends Database {
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
             if(documents.size() > 0) {
                 QueryDocumentSnapshot doc = documents.get(0);
-                String id = doc.getId();
+                String id = doc.getString("id");
                 String displayName = doc.getString("displayName");
-                List<String> friendUsernames = (List<String>) doc.get("friends");
-                List<Friend> friends = getFriends(friendUsernames);
+                List<String> friendIds = (List<String>) doc.get("friendIds");
                 List<String> chatroomIds = (List<String>) doc.get("chatroomIds");
-                return new User(id, username, displayName, password, friends, chatroomIds);
+                return new User(id, username, displayName, password, friendIds, chatroomIds);
             }
         }
         catch (Exception e) {
@@ -85,10 +85,9 @@ public class Firestore extends Database {
                 String id = doc.getId();
                 String password = doc.getString("password");
                 String displayName = doc.getString("displayName");
-                List<String> friendUsernames = (List<String>) doc.get("friends");
-                List<Friend> friends = getFriends(friendUsernames);
+                List<String> friendIds = (List<String>) doc.get("friendIds");
                 List<String> chatroomIds = (List<String>) doc.get("chatroomIds");
-                return new User(id, username, displayName, password, friends, chatroomIds);
+                return new User(id, username, displayName, password, friendIds, chatroomIds);
             }
         }
         catch (Exception e) {
@@ -99,11 +98,11 @@ public class Firestore extends Database {
         throw new Exception("User not found.");
     }
 
-    public List<Friend> getFriends(List<String> usernames) throws Exception {
+    public List<Friend> getFriends(List<String> ids) throws Exception {
         try {
             List<Friend> friends = new ArrayList<>();
-            if(usernames.size() <= 0) return friends;
-            Query query = db.collection("users").whereIn("username", usernames);
+            if(ids.size() <= 0) return friends;
+            Query query = db.collection("users").whereIn("id", ids);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
             for (QueryDocumentSnapshot doc : documents) {
@@ -119,8 +118,8 @@ public class Firestore extends Database {
         }
     }
 
-    public void updateUser(User user, Map<String, Object> update) throws Exception {
-        ApiFuture<WriteResult> result = db.collection("users").document(user.id).set(update, SetOptions.merge());
+    public void updateUser(User user) throws Exception {
+        ApiFuture<WriteResult> result = db.collection("users").document(user.id).set(JsonUtils.toJson(user));
         result.get();
     }
 

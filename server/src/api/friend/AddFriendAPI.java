@@ -1,10 +1,9 @@
-package api.friends;
+package api.friend;
 
 import api.API;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
-import models.Friend;
 import models.User;
 import utils.JsonUtils;
 
@@ -13,7 +12,7 @@ import java.util.*;
 public class AddFriendAPI extends API {
     @Override
     public String getPath() {
-        return "/friends/add";
+        return "/friend/add";
     }
 
     @Override
@@ -27,15 +26,15 @@ public class AddFriendAPI extends API {
 
         // Parse request
         Map<String, Object> body = request.body;
-        String username = (String) body.get("username");
-        if(username == null) {
+        String friendId = (String) body.get("id");
+        if(friendId == null) {
             sender.response(400, "Incorrect request format.");
             return;
         }
 
         // Check if already have the same friend
-        for(Friend friend : user.friends) {
-            if(friend.username.compareTo(username) == 0) {
+        for(String id : user.friendIds) {
+            if(id.compareTo(friendId) == 0) {
                 sender.response(400, "You already have this friend.");
                 return;
             }
@@ -43,21 +42,9 @@ public class AddFriendAPI extends API {
 
         try {
             // Add friend to user
-            List<Friend> newFriends = database.getFriends(Collections.singletonList(username));
-            if(newFriends.size() == 0) {
-                sender.response(400, "User not found.");
-                return;
-            }
-            Friend newFriend = newFriends.get(0);
-            user.friends.add(newFriend);
-
-            // Update user
-            List<String> friendUsernames = user.friends.stream().map(friend -> friend.username).toList();
-            Map<String, Object> update = new HashMap<>();
-            update.put("friends", friendUsernames);
-            database.updateUser(user, update);
-
-            sender.response(200, JsonUtils.toJson(new FriendsAPIResponse(user.friends)));
+            user.friendIds.add(friendId);
+            database.updateUser(user);
+            sender.response(200, JsonUtils.toJson(new FriendsAPIResponse(user.friendIds)));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();

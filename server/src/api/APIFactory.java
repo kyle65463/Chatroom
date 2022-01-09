@@ -1,8 +1,8 @@
 package api;
 
 import api.auth.*;
-import api.friends.AddFriendAPI;
-import api.friends.DeleteFriendAPI;
+import api.friend.AddFriendAPI;
+import api.friend.DeleteFriendAPI;
 
 import java.util.Arrays;
 import java.util.List;
