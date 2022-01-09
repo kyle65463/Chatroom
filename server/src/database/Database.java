@@ -5,7 +5,6 @@ import models.Friend;
 import models.User;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class Database {
     public abstract User createUser(String displayName, String username, String password) throws Exception;
@@ -17,4 +16,5 @@ public abstract class Database {
     public abstract Chatroom createChatroom(String chatroomName, String username) throws Exception;
     public abstract void updateChatroom(Chatroom chatroom) throws Exception;
     public abstract Chatroom getChatroom(String id) throws Exception;
+    public abstract List<Chatroom> getChatrooms(List<String> ids) throws Exception;
 }

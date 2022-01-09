@@ -8,13 +8,15 @@ import models.Chatroom;
 import models.User;
 import utils.JsonUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CreateChatroomAPI extends API {
+public class ListChatroomAPI extends API {
     @Override
     public String getPath() {
-        return "/chatroom/create";
+        return "/chatroom/list";
     }
 
     @Override
@@ -26,20 +28,10 @@ public class CreateChatroomAPI extends API {
             return;
         }
 
-        // Parse request
-        Map<String, Object> body = request.body;
-        String chatroomName = (String) body.get("name");
-        if(chatroomName == null) {
-            sender.response(400, "Incorrect request format.");
-            return;
-        }
-
         try {
-            // Create chatroom
-            Chatroom chatroom = database.createChatroom(chatroomName, user.username);
-            user.chatroomIds.add(chatroom.id);
-            database.updateUser(user);
-            sender.response(200, JsonUtils.toJson(chatroom));
+            // Get chatrooms
+            List<Chatroom> chatrooms = database.getChatrooms(user.chatroomIds);
+            sender.response(200, JsonUtils.toJson(Collections.singletonMap("chatrooms", chatrooms)));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();

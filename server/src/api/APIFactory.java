@@ -1,6 +1,10 @@
 package api;
 
 import api.auth.*;
+import api.chatroom.AddUserToChatroomAPI;
+import api.chatroom.CreateChatroomAPI;
+import api.chatroom.DeleteUserFromChatroomAPI;
+import api.chatroom.ListChatroomAPI;
 import api.friend.AddFriendAPI;
 import api.friend.DeleteFriendAPI;
 import api.friend.ListFriendAPI;
@@ -21,6 +25,7 @@ public class APIFactory {
     private static final List<API> apis = Arrays.asList(
             new LoginAPI(), new RegisterAPI(),
             new AddFriendAPI(), new DeleteFriendAPI(), new ListFriendAPI(),
+            new AddUserToChatroomAPI(), new DeleteUserFromChatroomAPI(), new ListChatroomAPI(), new CreateChatroomAPI(),
             new NotFound()
     );
 }

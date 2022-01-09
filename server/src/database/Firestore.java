@@ -107,14 +107,11 @@ public class Firestore extends Database {
             return friends;
         }
         catch (Exception e) {
-            e.printStackTrace();
             throw new Exception("Get friend list error.");
         }
     }
 
     public void updateUser(User user) throws Exception {
-        System.out.println(user);
-        System.out.println(JsonUtils.toJson(user));
         ApiFuture<WriteResult> result = db.collection("users").document(user.username).set(user);
         result.get();
     }
@@ -159,6 +156,26 @@ public class Firestore extends Database {
     public void updateChatroom(Chatroom chatroom) throws Exception {
         ApiFuture<WriteResult> result = db.collection("chatrooms").document(chatroom.id).set(chatroom);
         result.get();
+    }
+
+    public List<Chatroom> getChatrooms(List<String> ids) throws Exception {
+        try {
+            List<Chatroom> chatrooms = new ArrayList<>();
+            if(ids.size() <= 0) return chatrooms;
+            Query query = db.collection("chatrooms").whereIn("id", ids);
+            QuerySnapshot querySnapshot = query.get().get();
+            List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+            for (QueryDocumentSnapshot doc : documents) {
+                String id = doc.getString("id");
+                String name = doc.getString("name");
+                List<String> usernames = Collections.singletonList(doc.getString("usernames"));
+                chatrooms.add(new Chatroom(id, name, usernames));
+            }
+            return chatrooms;
+        }
+        catch (Exception e) {
+            throw new Exception("Get Chatroom list error.");
+        }
     }
 
     private static com.google.cloud.firestore.Firestore db;
