@@ -23,14 +23,12 @@ public class DeleteFriend extends HomeAction {
             username = Scanner.instance.nextLine();
         }
         params.put("username", username.trim());
-        sender.post("/friends/delete", JsonUtils.toJson(params), auth.authToken);
+        sender.post("/friend/delete", JsonUtils.toJson(params), auth.authToken);
 
         try {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
-                    List<Map<String, Object>> rawFriends = (List<Map<String, Object>>) response.body.get("friends");
-                    auth.user.friends = rawFriends.stream().map(Friend::new).toList();
                     System.out.println("Deleted successfully");
                     System.out.println("");
                 }

@@ -1,13 +1,8 @@
-import actions.Action;
 import actions.auth.AuthAction;
-import actions.auth.Login;
-import actions.auth.Register;
 import actions.home.HomeAction;
 import http.HttpReceiver;
 import http.HttpSender;
 import models.Auth;
-import models.Friend;
-import utils.Scanner;
 
 import java.io.*;
 import java.net.*;

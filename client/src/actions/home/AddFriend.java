@@ -12,7 +12,6 @@ import utils.Scanner;
 
 import java.util.HashMap;
 
-import java.util.List;
 import java.util.Map;
 
 public class AddFriend extends HomeAction {
@@ -25,7 +24,7 @@ public class AddFriend extends HomeAction {
             username = Scanner.instance.nextLine();
         }
         params.put("username", username.trim());
-        sender.post("/friends/add", JsonUtils.toJson(params), auth.authToken);
+        sender.post("/friend/add", JsonUtils.toJson(params), auth.authToken);
 
         try {
             HttpMessage message = receiver.readMessage();
@@ -33,8 +32,6 @@ public class AddFriend extends HomeAction {
                 if(response.status == 200) {
                     System.out.println("Added successfully");
                     System.out.println("");
-                    List<Map<String, Object>> rawFriends = (List<Map<String, Object>>) response.body.get("friends");
-                    auth.user.friends = rawFriends.stream().map(Friend::new).toList();
                 }
                 else {
                     // Request failed
