@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import utils.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,6 +8,7 @@ public class Main {
         }
         String serverIp = args[0];
         int port = Integer.parseInt(args[1]);
+        Scanner.instance.nextLine();
         Client.run(serverIp, port);
     }
 }

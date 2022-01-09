@@ -1,6 +1,6 @@
 package api.chatroom;
 
-import api.API;
+import api.HttpAPI;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
@@ -11,7 +11,7 @@ import utils.JsonUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DeleteUserFromChatroomAPI extends API {
+public class DeleteUserFromChatroomAPI extends HttpAPI {
     @Override
     public String getPath() {
         return "/chatroom/user/delete";

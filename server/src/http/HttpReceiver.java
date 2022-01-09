@@ -16,6 +16,10 @@ public class HttpReceiver {
 
     private final BufferedReader is ;
 
+    public boolean isReady() throws IOException {
+        return is.ready();
+    }
+
     public HttpMessage readMessage() throws Exception {
         String startLine = is.readLine();
         Map<String, String> header = new HashMap<>();

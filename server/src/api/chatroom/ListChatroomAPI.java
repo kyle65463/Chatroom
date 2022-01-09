@@ -1,6 +1,6 @@
 package api.chatroom;
 
-import api.API;
+import api.HttpAPI;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ListChatroomAPI extends API {
+public class ListChatroomAPI extends HttpAPI {
     @Override
     public String getPath() {
         return "/chatroom/list";

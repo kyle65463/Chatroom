@@ -3,6 +3,8 @@ package database;
 import models.Chatroom;
 import models.Friend;
 import models.User;
+import models.chat.ChatHistory;
+import models.chat.ChatMessage;
 
 import java.util.List;
 
@@ -17,4 +19,7 @@ public abstract class Database {
     public abstract void updateChatroom(Chatroom chatroom) throws Exception;
     public abstract Chatroom getChatroom(String id) throws Exception;
     public abstract List<Chatroom> getChatrooms(List<String> ids) throws Exception;
+
+    public abstract void appendChatMessage(String chatroomId, ChatMessage message) throws Exception;
+    public abstract ChatHistory getChatHistories(String chatroomId, int limit) throws Exception;
 }

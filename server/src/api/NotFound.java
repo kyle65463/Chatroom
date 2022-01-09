@@ -1,11 +1,10 @@
 package api;
 
-import api.API;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
 
-public class NotFound extends API {
+public class NotFound extends HttpAPI {
     @Override
     public String getPath() {
         return "";

@@ -1,22 +1,25 @@
-package api.friend;
+package api.chat;
 
-import api.HttpAPI;
+import api.ChatMessageAPI;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
 import models.User;
 import utils.JsonUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
-public class DeleteFriendAPI extends HttpAPI {
+public class ReceiveMessageAPI extends ChatMessageAPI {
     @Override
     public String getPath() {
-        return "/friend/delete";
+        // Receiving message in servers perspective, sending message in client's perspective
+        return "/chat/send";
     }
 
     @Override
-    public void handle(HttpRequest request, HttpSender sender, Database database) {
+    public void handle(HttpRequest request, HttpSender sender, Database database, BlockingQueue<String> messageQueue) {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
@@ -26,22 +29,18 @@ public class DeleteFriendAPI extends HttpAPI {
 
         // Parse request
         Map<String, Object> body = request.body;
-        String friendId = (String) body.get("username");
-        if(friendId == null) {
+        String chatroomId = (String) body.get("id");
+        String type = (String) body.get("type");
+        String content = (String) body.get("content");
+        if(chatroomId == null || type == null ||  content == null) {
             sender.response(400, "Incorrect request format.");
             return;
         }
 
-        // Check if not have the friend
-        if(!user.friendIds.contains(friendId)) {
-            sender.response(400, "You don't have this friend.");
-            return;
-        }
-
         try {
-            // Update user
-            user.friendIds.removeIf(id -> id.compareTo(friendId) == 0);
-            database.updateUser(user);
+            System.out.println("CONTENT::");
+            System.out.println(content);
+            messageQueue.put("Thread-2");
             sender.response(200, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {

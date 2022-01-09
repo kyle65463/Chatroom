@@ -1,6 +1,6 @@
 package api.friend;
 
-import api.API;
+import api.HttpAPI;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
@@ -9,7 +9,7 @@ import utils.JsonUtils;
 
 import java.util.*;
 
-public class AddFriendAPI extends API {
+public class AddFriendAPI extends HttpAPI {
     @Override
     public String getPath() {
         return "/friend/add";

@@ -1,8 +1,6 @@
 package api.auth;
 
-import api.API;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import api.HttpAPI;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
@@ -12,7 +10,7 @@ import utils.JsonUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterAPI extends API {
+public class RegisterAPI extends HttpAPI {
     @Override
     public String getPath() {
         return "/register";
