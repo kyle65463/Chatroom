@@ -26,7 +26,7 @@ public class AddFriendAPI extends API {
 
         // Parse request
         Map<String, Object> body = request.body;
-        String friendId = (String) body.get("id");
+        String friendId = (String) body.get("username");
         if(friendId == null) {
             sender.response(400, "Incorrect request format.");
             return;
@@ -44,9 +44,11 @@ public class AddFriendAPI extends API {
             // Add friend to user
             user.friendIds.add(friendId);
             database.updateUser(user);
-            sender.response(200, JsonUtils.toJson(new FriendsAPIResponse(user.friendIds)));
+            sender.response(200, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(user.friendIds);
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
             sender.response(400, JsonUtils.toJson(output));

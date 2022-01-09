@@ -21,6 +21,7 @@ public class ListFriend extends HomeAction {
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
                     List<Map<String, Object>> rawFriends = (List<Map<String, Object>>) response.body.get("friends");
+                    System.out.println(rawFriends);
                     List<Friend> friends = rawFriends.stream().map(Friend::new).toList();
                     System.out.println("Friends:");
                     if(friends.size() == 0) {
@@ -29,8 +30,6 @@ public class ListFriend extends HomeAction {
                     for(Friend friend : friends) {
                         System.out.println(friend.displayName + " (" + friend.username + ")");
                     }
-
-                    System.out.println("Deleted successfully");
                     System.out.println("");
                 }
                 else {

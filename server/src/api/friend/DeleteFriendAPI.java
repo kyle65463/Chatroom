@@ -42,7 +42,7 @@ public class DeleteFriendAPI extends API {
             // Update user
             user.friendIds.removeIf(id -> id.compareTo(friendId) == 0);
             database.updateUser(user);
-            sender.response(200, JsonUtils.toJson(new FriendsAPIResponse(user.friendIds)));
+            sender.response(200, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
