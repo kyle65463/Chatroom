@@ -1,9 +1,10 @@
 package api.chat;
 
-import api.ChatMessageAPI;
+import api.API;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
+import http.ThreadMessenger;
 import models.User;
 import utils.JsonUtils;
 
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-public class ReceiveMessageAPI extends ChatMessageAPI {
+public class ReceiveMessageAPI extends API {
     @Override
     public String getPath() {
         // Receiving message in servers perspective, sending message in client's perspective
@@ -19,7 +20,7 @@ public class ReceiveMessageAPI extends ChatMessageAPI {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpSender sender, Database database, BlockingQueue<String> messageQueue) {
+    public void handle(HttpRequest request, HttpSender sender, Database database, ThreadMessenger threadMessenger) {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
@@ -40,7 +41,7 @@ public class ReceiveMessageAPI extends ChatMessageAPI {
         try {
             System.out.println("CONTENT::");
             System.out.println(content);
-            messageQueue.put("Thread-2");
+            threadMessenger.putMessage("kk", new HttpRequest(null, "{\"content\":"  + content+ "}", "", null));
             sender.response(200, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {

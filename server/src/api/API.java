@@ -5,9 +5,19 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import database.Database;
 import http.HttpRequest;
+import http.HttpSender;
+import http.ThreadMessenger;
 import models.User;
 
 public abstract class API {
+    public void handle(HttpRequest request, HttpSender sender, Database database) {
+
+    }
+
+    public void handle(HttpRequest request, HttpSender sender, Database database, ThreadMessenger threadMessenger) {
+        handle(request, sender, database);
+    }
+
     public abstract String getPath();
 
     protected User authenticate(HttpRequest request, Database database) {
@@ -17,7 +27,7 @@ public abstract class API {
             String username = jwt.getClaim("username").asString();
             return database.getUser(username);
 
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         return null;
     }

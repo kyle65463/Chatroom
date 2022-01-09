@@ -4,7 +4,7 @@ import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
 
-public class NotFound extends HttpAPI {
+public class NotFound extends API {
     @Override
     public String getPath() {
         return "";

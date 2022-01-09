@@ -1,6 +1,6 @@
 package api.friend;
 
-import api.HttpAPI;
+import api.API;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
@@ -9,7 +9,7 @@ import utils.JsonUtils;
 
 import java.util.*;
 
-public class DeleteFriendAPI extends HttpAPI {
+public class DeleteFriendAPI extends API {
     @Override
     public String getPath() {
         return "/friend/delete";

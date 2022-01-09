@@ -1,18 +1,10 @@
 import api.API;
-import api.ChatMessageAPI;
-import api.HttpAPI;
 import api.APIFactory;
-import com.google.firebase.messaging.Message;
 import database.Database;
 import database.Firestore;
-import http.HttpMessage;
-import http.HttpReceiver;
-import http.HttpRequest;
-import http.HttpSender;
+import http.*;
 
 import java.net.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server {
     public static void run(int port) {
@@ -39,10 +31,11 @@ public class Server {
 
 class ServerThread extends Thread {
     private final Socket socket;
-    BlockingQueue<String> messageQueue = new LinkedBlockingQueue<String>();
+    private final ThreadMessenger threadMessenger;
 
     public ServerThread(Socket socket) {
         this.socket = socket;
+        this.threadMessenger = new ThreadMessenger(getName());
     }
 
     public void run() {
@@ -50,28 +43,20 @@ class ServerThread extends Thread {
             Database database = new Firestore();
             HttpSender sender = new HttpSender(socket);
             HttpReceiver receiver = new HttpReceiver(socket);
-            System.out.println(getName());
+
             while(true) {
-                String msg;
-                if((msg = messageQueue.peek()) != null) {
-                    if(msg.compareTo(getName()) == 0) {
-                        System.out.println(msg);
-                        messageQueue.poll();
-                    }
+                if(threadMessenger.isReady()) {
+                    // Handle chat message
+                    HttpMessage message = threadMessenger.readMessage();
+                    System.out.println(message.body);
                 }
 
                 if(receiver.isReady()) {
                     HttpMessage message = receiver.readMessage();
-                    System.out.println("Get request");
                     if (message instanceof HttpRequest request) {
+                        System.out.println("Get request");
                         API api = APIFactory.getAPI(request.path);
-                        if(api instanceof HttpAPI httpAPI) {
-                            httpAPI.handle(request, sender, database);
-                        }
-                        else if(api instanceof ChatMessageAPI chatMessageAPI) {
-                            chatMessageAPI.handle(request, sender, database, messageQueue);
-                        }
-
+                        api.handle(request, sender, database, threadMessenger);
                         System.out.println("Send response");
                     } else {
                         System.out.println("Http error");

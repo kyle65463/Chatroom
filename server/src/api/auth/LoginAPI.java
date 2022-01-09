@@ -1,23 +1,24 @@
 package api.auth;
 
-import api.HttpAPI;
+import api.API;
 import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
+import http.ThreadMessenger;
 import models.User;
 import utils.JsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginAPI extends HttpAPI {
+public class LoginAPI extends API {
     @Override
     public String getPath() {
         return "/login";
     }
 
     @Override
-    public void handle(HttpRequest request, HttpSender sender, Database database) {
+    public void handle(HttpRequest request, HttpSender sender, Database database, ThreadMessenger threadMessenger) {
         Map<String, Object> body = request.body;
         String username = (String) body.get("username");
         String password = (String) body.get("password");
@@ -30,6 +31,7 @@ public class LoginAPI extends HttpAPI {
         try {
             user = database.getUser(username, password);
             String authToken = generateJWTToken(user.username);
+            threadMessenger.setUsername(user.username);
             sender.response(200, JsonUtils.toJson(new LoginAPIResponse(authToken, user)));
         }
         catch (Exception e) {
