@@ -27,7 +27,7 @@ public abstract class ChatroomMenuActionFactory {
                     return new CreateChatroom();
                 }
                 if (command == 3) {
-                    return new DeleteFriend();
+                    return new JoinChatroom();
                 }
                 if (command == 4) {
                     return new CheckUserInfo();

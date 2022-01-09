@@ -27,7 +27,7 @@ public class Firestore extends Database {
     public User createUser(String displayName, String username, String password) throws Exception {
         // Check if user exists
         Query query = db.collection("users").whereEqualTo("username", username);
-        if(query.get().get().getDocuments().size() > 0) throw new Exception("Username exists.");
+        if (query.get().get().getDocuments().size() > 0) throw new Exception("Username exists.");
 
         // Create the user
         try {
@@ -40,29 +40,27 @@ public class Firestore extends Database {
             ApiFuture<WriteResult> future = db.collection("users").document(username).set(userData);
             future.get();
             return new User(username, displayName, password, new ArrayList<>(), new ArrayList<>());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Create user error.");
         }
     }
 
     // For login
-    public User getUser(String username, String password) throws Exception  {
+    public User getUser(String username, String password) throws Exception {
         try {
             Query query = db.collection("users")
                     .whereEqualTo("username", username)
                     .whereEqualTo("password", password);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-            if(documents.size() > 0) {
+            if (documents.size() > 0) {
                 QueryDocumentSnapshot doc = documents.get(0);
                 String displayName = doc.getString("displayName");
                 List<String> friendIds = (List<String>) doc.get("friendIds");
                 List<String> chatroomIds = (List<String>) doc.get("chatroomIds");
                 return new User(username, displayName, password, friendIds, chatroomIds);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Login error.");
         }
 
@@ -70,12 +68,12 @@ public class Firestore extends Database {
         throw new Exception("Username or password incorrect.");
     }
 
-    public User getUser(String username) throws Exception  {
+    public User getUser(String username) throws Exception {
         try {
             Query query = db.collection("users").whereEqualTo("username", username);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-            if(documents.size() > 0) {
+            if (documents.size() > 0) {
                 QueryDocumentSnapshot doc = documents.get(0);
                 String password = doc.getString("password");
                 String displayName = doc.getString("displayName");
@@ -83,8 +81,7 @@ public class Firestore extends Database {
                 List<String> chatroomIds = (List<String>) doc.get("chatroomIds");
                 return new User(username, displayName, password, friendIds, chatroomIds);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Get user error.");
         }
 
@@ -95,7 +92,7 @@ public class Firestore extends Database {
     public List<Friend> getFriends(List<String> ids) throws Exception {
         try {
             List<Friend> friends = new ArrayList<>();
-            if(ids.size() <= 0) return friends;
+            if (ids.size() <= 0) return friends;
             Query query = db.collection("users").whereIn("username", ids);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -105,8 +102,7 @@ public class Firestore extends Database {
                 friends.add(new Friend(username, displayName));
             }
             return friends;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Get friend list error.");
         }
     }
@@ -120,37 +116,35 @@ public class Firestore extends Database {
         try {
             Map<String, Object> chatroomData = new HashMap<>();
             List<String> usernames = Collections.singletonList(username);
-            String id = UUID.randomUUID().toString();
+            String id = UUID.randomUUID().toString().substring(0, 4) + UUID.randomUUID().toString().substring(9, 12);
             chatroomData.put("id", id);
             chatroomData.put("name", chatroomName);
             chatroomData.put("usernames", usernames);
             ApiFuture<WriteResult> future = db.collection("chatrooms").document(id).set(chatroomData);
             future.get();
             return new Chatroom(id, chatroomName, usernames);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Create chatroom error.");
         }
     }
 
-    public Chatroom getChatroom(String id) throws Exception  {
+    public Chatroom getChatroom(String id) throws Exception {
         try {
             Query query = db.collection("chatrooms").whereEqualTo("id", id);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
-            if(documents.size() > 0) {
+            if (documents.size() > 0) {
                 QueryDocumentSnapshot doc = documents.get(0);
                 String name = doc.getString("name");
                 List<String> usernames = (List<String>) doc.get("usernames");
                 return new Chatroom(id, name, usernames);
             }
-        }
-        catch (Exception e) {
-            throw new Exception("Get user error.");
+        } catch (Exception e) {
+            throw new Exception("Get chat room error.");
         }
 
         // User not found
-        throw new Exception("User not found.");
+        throw new Exception("Chat room not found.");
     }
 
     public void updateChatroom(Chatroom chatroom) throws Exception {
@@ -161,7 +155,7 @@ public class Firestore extends Database {
     public List<Chatroom> getChatrooms(List<String> ids) throws Exception {
         try {
             List<Chatroom> chatrooms = new ArrayList<>();
-            if(ids.size() <= 0) return chatrooms;
+            if (ids.size() <= 0) return chatrooms;
             Query query = db.collection("chatrooms").whereIn("id", ids);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
@@ -172,8 +166,7 @@ public class Firestore extends Database {
                 chatrooms.add(new Chatroom(id, name, usernames));
             }
             return chatrooms;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Get Chatroom list error.");
         }
     }
