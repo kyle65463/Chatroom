@@ -1,19 +1,18 @@
 package actions.home;
 
+import actions.VoidAction;
 import http.HttpMessage;
 import http.HttpReceiver;
 import http.HttpResponse;
 import http.HttpSender;
 import models.Auth;
-import models.Friend;
 import utils.JsonUtils;
 import utils.Scanner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class DeleteFriend extends HomeAction {
+public class DeleteFriend extends VoidAction {
     public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
         Map<String, String> params = new HashMap<>();
         System.out.println("Enter friend's username:");

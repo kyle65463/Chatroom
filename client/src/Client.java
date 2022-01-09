@@ -1,6 +1,7 @@
 import actions.Action;
+import actions.VoidAction;
 import actions.auth.AuthAction;
-import actions.home.HomeAction;
+import actions.home.HomeActionFactory;
 import http.HttpReceiver;
 import http.HttpSender;
 import models.Auth;
@@ -41,9 +42,9 @@ public class Client {
 
                     String path = "/" + String.join("/", pathStack);
                     if(path.compareTo("/home") == 0) {
-                        Action action = HomeAction.getAction();
-                        if(action instanceof HomeAction homeAction) {
-                            homeAction.perform(auth, sender, receiver);
+                        Action action = HomeActionFactory.getAction();
+                        if(action instanceof VoidAction voidAction) {
+                            voidAction.perform(auth, sender, receiver);
                         }
                         else if(action instanceof AuthAction authAction) {
                             auth = authAction.perform(sender, receiver);

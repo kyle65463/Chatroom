@@ -1,4 +1,4 @@
-package actions.home;
+package actions.chatroom;
 
 import actions.VoidAction;
 import http.HttpMessage;
@@ -6,30 +6,25 @@ import http.HttpReceiver;
 import http.HttpResponse;
 import http.HttpSender;
 import models.Auth;
-import models.Friend;
 import utils.JsonUtils;
+import utils.Scanner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class ListFriend extends VoidAction {
+public class CreateChatroom extends VoidAction {
     public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
-        sender.post("/friend/list", JsonUtils.toJson(new HashMap<>()), auth.authToken);
+        Map<String, String> params = new HashMap<>();
+        System.out.println("Enter chat room's name:");
+        String name = Scanner.getRequiredData("Name");
+        params.put("name", name);
+        sender.post("/chatroom/create", JsonUtils.toJson(params), auth.authToken);
 
         try {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
-                    List<Map<String, Object>> rawFriends = (List<Map<String, Object>>) response.body.get("friends");
-                    List<Friend> friends = rawFriends.stream().map(Friend::new).toList();
-                    System.out.println("Friends:");
-                    if(friends.size() == 0) {
-                        System.out.println("No friends");
-                    }
-                    for(Friend friend : friends) {
-                        System.out.println(friend.displayName + " (" + friend.username + ")");
-                    }
+                    System.out.println("Created successfully");
                     System.out.println("");
                 }
                 else {
