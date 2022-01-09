@@ -14,4 +14,8 @@ public class JsonUtils {
         Gson gson = new Gson();
         return gson.toJson(obj);
     }
+
+    public static Map<String, Object> objToMap(Object obj) {
+        return jsonToMap(toJson(obj));
+    }
 }

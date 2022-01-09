@@ -13,6 +13,7 @@ import models.chat.ChatHistory;
 import models.chat.ChatMessage;
 import models.chat.ChatMessageFactory;
 import utils.JsonUtils;
+import utils.TimeUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -174,15 +175,49 @@ public class Firestore extends Database {
         }
     }
 
+    public void appendChatMessage(String chatroomId, ChatMessage message) throws Exception {
+        try{
+            Query query = db.collection("chatHistories")
+                    .whereEqualTo("chatroomId", chatroomId)
+                    .limit(1).orderBy("timestamp", Query.Direction.DESCENDING);
+            QuerySnapshot querySnapshot = query.get().get();
+            List<QueryDocumentSnapshot> docs = querySnapshot.getDocuments();
+            if(docs.size() > 0) {
+                QueryDocumentSnapshot doc = docs.get(0);
+                String id = doc.getString("id");
+                List<Map<String, Object>> messages = (List<Map<String, Object>>) doc.get("messages");
+                if(messages.size() > 25) {
+                    // History is too long, create a new one
+                    createChatHistory(chatroomId, Collections.singletonList(message));
+                }
+                else {
+                    // Append it to the last entry
+                    messages.add(JsonUtils.objToMap(message));
+                    ApiFuture<WriteResult> result = db.collection("chatHistories").document(id).set(
+                            Collections.singletonMap("messages", messages), SetOptions.merge()
+                    );
+                    result.get();
+                }
+                return;
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Append chat message error.");
+        }
+        throw new Exception("Append chat message error.");
+    }
+
     public ChatHistory getChatHistories(String chatroomId, int limit) throws Exception {
         try {
-            Query query = db.collection("chatHistories").whereEqualTo("chatroomId", chatroomId).limit(limit);
+            Query query = db.collection("chatHistories")
+                    .whereEqualTo("chatroomId", chatroomId)
+                    .limit(limit).orderBy("timestamp", Query.Direction.DESCENDING);
             QuerySnapshot querySnapshot = query.get().get();
-            List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+            List<QueryDocumentSnapshot> docs = querySnapshot.getDocuments();
 
             boolean isLast = false;
             List<ChatMessage> messages = new ArrayList<>();
-            for (QueryDocumentSnapshot doc : documents) {
+            for (QueryDocumentSnapshot doc : docs) {
                 List<Map<String, Object>> rawMessages = (List<Map<String, Object>>) doc.get("messages");
                 assert rawMessages != null;
                 for(Map<String, Object> message : rawMessages) {
@@ -204,6 +239,22 @@ public class Firestore extends Database {
             return new ChatHistory(messages, isLast);
         } catch (Exception e) {
             throw new Exception("Get chat history error.");
+        }
+    }
+
+    private void createChatHistory(String chatroomId, List<ChatMessage> messages) throws Exception {
+        try {
+            Map<String, Object> chatHistoryData = new HashMap<>();
+            String id = UUID.randomUUID().toString();
+            chatHistoryData.put("id", id);
+            chatHistoryData.put("isLast", true);
+            chatHistoryData.put("timestamp", TimeUtils.getCurrentTimeString());
+            chatHistoryData.put("chatroomId", chatroomId);
+            chatHistoryData.put("messages", messages.stream().map(JsonUtils::objToMap));
+            ApiFuture<WriteResult> future = db.collection("chatrooms").document(id).set(chatHistoryData);
+            future.get();
+        } catch (Exception e) {
+            throw new Exception("Create chatroom error.");
         }
     }
 
