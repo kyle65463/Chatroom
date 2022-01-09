@@ -30,8 +30,6 @@ public class LoginAPI extends API {
 
         User user;
         try {
-            System.out.println("username " + username);
-            System.out.println("password " + password);
             user = database.getUser(username, password);
             String authToken = generateJWTToken(user.username);
             sender.response(200, JsonUtils.toJson(new LoginAPIResponse(authToken, user)));

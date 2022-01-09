@@ -10,9 +10,10 @@ public abstract class AuthAction extends Action {
     public abstract Auth perform(HttpSender sender, HttpReceiver receiver);
 
     public static AuthAction getCommand() {
-        System.out.println("(1) Login");
-        System.out.println("(2) Register");
         while (true) {
+            System.out.println("Choose an action:");
+            System.out.println("(1) Login");
+            System.out.println("(2) Register");
             try {
                 int command = Integer.parseInt(Scanner.instance.nextLine());
                 if (command == 1) {
@@ -23,6 +24,7 @@ public abstract class AuthAction extends Action {
                 }
             } catch (Exception ignored) {
             }
+            System.out.println("Invalid action.");
         }
     }
 }

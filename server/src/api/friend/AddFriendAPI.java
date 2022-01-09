@@ -41,6 +41,13 @@ public class AddFriendAPI extends API {
         }
 
         try {
+            // Check if user exists
+            User newFriend = database.getUser(friendId);
+            if(newFriend == null) {
+                sender.response(400, "User not found.");
+                return;
+            }
+
             // Add friend to user
             user.friendIds.add(friendId);
             database.updateUser(user);
