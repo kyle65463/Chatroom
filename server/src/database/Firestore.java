@@ -9,6 +9,9 @@ import com.google.firebase.cloud.FirestoreClient;
 import models.Chatroom;
 import models.Friend;
 import models.User;
+import models.chat.ChatHistory;
+import models.chat.ChatMessage;
+import models.chat.ChatMessageFactory;
 import utils.JsonUtils;
 
 import java.io.IOException;
@@ -167,7 +170,40 @@ public class Firestore extends Database {
             }
             return chatrooms;
         } catch (Exception e) {
-            throw new Exception("Get Chatroom list error.");
+            throw new Exception("Get chatroom list error.");
+        }
+    }
+
+    public ChatHistory getChatHistories(String chatroomId, int limit) throws Exception {
+        try {
+            Query query = db.collection("chatHistories").whereEqualTo("chatroomId", chatroomId).limit(limit);
+            QuerySnapshot querySnapshot = query.get().get();
+            List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+
+            boolean isLast = false;
+            List<ChatMessage> messages = new ArrayList<>();
+            for (QueryDocumentSnapshot doc : documents) {
+                List<Map<String, Object>> rawMessages = (List<Map<String, Object>>) doc.get("messages");
+                assert rawMessages != null;
+                for(Map<String, Object> message : rawMessages) {
+                    String messageId = (String) message.get("id");
+                    String type = (String) message.get("type");
+                    String content = (String) message.get("content");
+                    messages.add(ChatMessageFactory.parse(messageId, type, content));
+                }
+
+                boolean historyIsLast = doc.getBoolean("isLast");
+                if(historyIsLast) {
+                    isLast = true;
+                }
+            }
+
+            if(messages.size() == 0) {
+                isLast = true;
+            }
+            return new ChatHistory(messages, isLast);
+        } catch (Exception e) {
+            throw new Exception("Get chat history error.");
         }
     }
 
