@@ -11,7 +11,7 @@ public abstract class HomeActionFactory {
             System.out.println("(1) List friends");
             System.out.println("(2) Add a friend");
             System.out.println("(3) Delete a friend");
-            System.out.println("(4) Choose a chat room");
+            System.out.println("(4) Go to chat room menu");
             System.out.println("(5) Check account info");
             System.out.println("(6) Logout");
             try {
@@ -26,7 +26,7 @@ public abstract class HomeActionFactory {
                     return new DeleteFriend();
                 }
                 if (command == 4) {
-                    return new CheckUserInfo();
+                    return new GoToChatroomMenu();
                 }
                 if (command == 5) {
                     return new CheckUserInfo();

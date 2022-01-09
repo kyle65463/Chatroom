@@ -1,6 +1,8 @@
 import actions.Action;
+import actions.PathAction;
 import actions.VoidAction;
 import actions.auth.AuthAction;
+import actions.chatroomMenu.ChatroomMenuActionFactory;
 import actions.home.HomeActionFactory;
 import http.HttpReceiver;
 import http.HttpSender;
@@ -13,7 +15,6 @@ import java.util.Stack;
 public class Client {
     public static void run(String serverIp, int port) {
         try {
-            InetAddress address = InetAddress.getLocalHost();
             Socket socket = new Socket(serverIp, port);
             HttpSender sender = new HttpSender(socket);
             HttpReceiver receiver = new HttpReceiver(socket);
@@ -41,14 +42,22 @@ public class Client {
                     }
 
                     String path = "/" + String.join("/", pathStack);
+                    Action action = null;
                     if(path.compareTo("/home") == 0) {
-                        Action action = HomeActionFactory.getAction();
-                        if(action instanceof VoidAction voidAction) {
-                            voidAction.perform(auth, sender, receiver);
-                        }
-                        else if(action instanceof AuthAction authAction) {
-                            auth = authAction.perform(sender, receiver);
-                        }
+                        action = HomeActionFactory.getAction();
+                    }
+                    if(path.compareTo("/home/chatroom") == 0) {
+                        action = ChatroomMenuActionFactory.getAction();
+                    }
+
+                    if(action instanceof VoidAction voidAction) {
+                        voidAction.perform(auth, sender, receiver);
+                    }
+                    else if(action instanceof PathAction pathAction) {
+                        pathAction.perform(pathStack);
+                    }
+                    else if(action instanceof AuthAction authAction) {
+                        auth = authAction.perform(sender, receiver);
                     }
 
                 }

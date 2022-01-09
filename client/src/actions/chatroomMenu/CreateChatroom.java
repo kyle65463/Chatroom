@@ -1,4 +1,4 @@
-package actions.chatroom;
+package actions.chatroomMenu;
 
 import actions.VoidAction;
 import http.HttpMessage;

@@ -1,20 +1,18 @@
-package actions.chatroom;
+package actions.chatroomMenu;
 
 import actions.Action;
+import actions.GoBack;
 import actions.auth.Logout;
 import actions.home.AddFriend;
 import actions.home.CheckUserInfo;
 import actions.home.DeleteFriend;
 import actions.home.ListFriend;
-import http.HttpReceiver;
-import http.HttpSender;
-import models.Auth;
 import utils.Scanner;
 
-public abstract class ChatroomActionFactory {
+public abstract class ChatroomMenuActionFactory {
     public static Action getAction() {
         while (true) {
-            System.out.println("Chat room:");
+            System.out.println("Chat room menu:");
             System.out.println("(1) List chat rooms");
             System.out.println("(2) Create a chat room");
             System.out.println("(3) Join to an existing chat room");
@@ -23,10 +21,10 @@ public abstract class ChatroomActionFactory {
             try {
                 int command = Integer.parseInt(Scanner.instance.nextLine());
                 if (command == 1) {
-                    return new ListFriend();
+                    return new ListChatroom();
                 }
                 if (command == 2) {
-                    return new AddFriend();
+                    return new CreateChatroom();
                 }
                 if (command == 3) {
                     return new DeleteFriend();
@@ -35,10 +33,7 @@ public abstract class ChatroomActionFactory {
                     return new CheckUserInfo();
                 }
                 if (command == 5) {
-                    return new CheckUserInfo();
-                }
-                if (command == 6) {
-                    return new Logout();
+                    return new GoBack();
                 }
             } catch (Exception ignored) {
             }

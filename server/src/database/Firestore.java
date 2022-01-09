@@ -168,7 +168,7 @@ public class Firestore extends Database {
             for (QueryDocumentSnapshot doc : documents) {
                 String id = doc.getString("id");
                 String name = doc.getString("name");
-                List<String> usernames = Collections.singletonList(doc.getString("usernames"));
+                List<String> usernames = (List<String>) doc.get("usernames");
                 chatrooms.add(new Chatroom(id, name, usernames));
             }
             return chatrooms;
