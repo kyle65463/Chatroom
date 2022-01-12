@@ -2,6 +2,7 @@ import actions.Action;
 import actions.PathAction;
 import actions.VoidAction;
 import actions.auth.AuthAction;
+import actions.chatroom.ChatroomActionFactory;
 import actions.chatroomMenu.ChatroomMenuActionFactory;
 import actions.home.HomeActionFactory;
 import http.HttpReceiver;
@@ -46,8 +47,11 @@ public class Client {
                     if(path.compareTo("/home") == 0) {
                         action = HomeActionFactory.getAction();
                     }
-                    if(path.compareTo("/home/chatroom") == 0) {
+                    if(path.compareTo("/home/chatroomMenu") == 0) {
                         action = ChatroomMenuActionFactory.getAction();
+                    }
+                    if(path.compareTo("/home/chatroomMenu/chatroom") == 0) {
+                        action = ChatroomActionFactory.getAction(receiver);
                     }
 
                     if(action instanceof VoidAction voidAction) {

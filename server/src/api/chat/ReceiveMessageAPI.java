@@ -5,6 +5,7 @@ import database.Database;
 import http.HttpRequest;
 import http.HttpSender;
 import http.ThreadMessenger;
+import models.Chatroom;
 import models.User;
 import utils.JsonUtils;
 
@@ -39,9 +40,13 @@ public class ReceiveMessageAPI extends API {
         }
 
         try {
-            System.out.println("CONTENT::");
-            System.out.println(content);
-            threadMessenger.putMessage("kk", new HttpRequest(null, "{\"content\":"  + content+ "}", "", null));
+            request.path = "/chat/internal/send";
+            Chatroom chatroom = database.getChatroom(chatroomId);
+            for(String username : chatroom.usernames) {
+                if(username.compareTo(user.username) != 0) {
+                    threadMessenger.putMessage(username, request);
+                }
+            }
             sender.response(200, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {

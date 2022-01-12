@@ -44,11 +44,18 @@ class ServerThread extends Thread {
             HttpSender sender = new HttpSender(socket);
             HttpReceiver receiver = new HttpReceiver(socket);
 
+            // TODO: Remove user entry in threadMessenger after user logged out or quited
+
             while(true) {
                 if(threadMessenger.isReady()) {
                     // Handle chat message
                     HttpMessage message = threadMessenger.readMessage();
-                    System.out.println(message.body);
+                    if (message instanceof HttpRequest request) {
+                        API api = APIFactory.getAPI(request.path);
+                        api.handle(request, sender, database, threadMessenger);
+                    } else {
+                        System.out.println("Http error");
+                    }
                 }
 
                 if(receiver.isReady()) {

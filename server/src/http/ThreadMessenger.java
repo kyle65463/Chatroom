@@ -21,6 +21,10 @@ public class ThreadMessenger {
     public boolean isReady() {
         LinkedBlockingQueue<HttpMessage> messageQueue = messageMap.get(username);
         if(messageQueue == null) return false;
+        if(messageQueue.peek() != null) {
+            System.out.println(threadName);
+            System.out.println(username);
+        }
         return messageQueue.peek() != null;
     }
 

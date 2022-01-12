@@ -2,6 +2,7 @@ package actions.home;
 
 import actions.Action;
 import actions.auth.Logout;
+import actions.chatroom.SendTextMessage;
 import utils.Scanner;
 
 public abstract class HomeActionFactory {
@@ -33,9 +34,6 @@ public abstract class HomeActionFactory {
                 }
                 if (command == 6) {
                     return new Logout();
-                }
-                if (command == 7) {
-                    return new SendMessage();
                 }
             } catch (Exception ignored) {
             }

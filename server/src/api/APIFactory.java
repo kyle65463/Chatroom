@@ -2,6 +2,7 @@ package api;
 
 import api.auth.*;
 import api.chat.ReceiveMessageAPI;
+import api.chat.SendMessageAPI;
 import api.chatroom.AddUserToChatroomAPI;
 import api.chatroom.CreateChatroomAPI;
 import api.chatroom.DeleteUserFromChatroomAPI;
@@ -27,7 +28,7 @@ public class APIFactory {
             new LoginAPI(), new RegisterAPI(),
             new AddFriendAPI(), new DeleteFriendAPI(), new ListFriendAPI(),
             new AddUserToChatroomAPI(), new DeleteUserFromChatroomAPI(), new ListChatroomAPI(), new CreateChatroomAPI(),
-            new ReceiveMessageAPI(),
+            new ReceiveMessageAPI(), new SendMessageAPI(),
             new NotFound()
     );
 }

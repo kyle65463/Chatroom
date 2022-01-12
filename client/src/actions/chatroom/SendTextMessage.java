@@ -1,4 +1,4 @@
-package actions.home;
+package actions.chatroom;
 
 import actions.VoidAction;
 import http.HttpMessage;
@@ -12,12 +12,12 @@ import utils.Scanner;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SendMessage extends VoidAction {
+public class SendTextMessage extends VoidAction {
     public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
         Map<String, String> params = new HashMap<>();
         System.out.println("Enter message:");
         String content = Scanner.getRequiredData("content");
-        params.put("id", "123");
+        params.put("id", "1f6c335");
         params.put("type", "text");
         params.put("content", content);
         sender.post("/chat/send", JsonUtils.toJson(params), auth.authToken);
@@ -26,8 +26,7 @@ public class SendMessage extends VoidAction {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
-                    System.out.println("Sent successfully");
-                    System.out.println("");
+                    System.out.println("YOU: " + content);
                 }
                 else {
                     // Request failed

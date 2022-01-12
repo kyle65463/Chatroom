@@ -32,6 +32,7 @@ public class EnterChatroom extends PathAction {
             try {
                 int index = Integer.parseInt(Scanner.instance.nextLine()) - 1;
                 System.out.println("");
+                pathStack.push("chatroom");
                 return;
             } catch (Exception ignored) {
 

@@ -9,6 +9,6 @@ public class HttpRequest extends HttpMessage{
         this.path = path;
     }
 
-    public final String requestType;
-    public final String path;
+    public String requestType;
+    public String path;
 }
