@@ -7,6 +7,7 @@ import http.HttpSender;
 import http.ThreadMessenger;
 import models.Chatroom;
 import models.User;
+import models.chat.*;
 import utils.JsonUtils;
 
 import java.util.HashMap;
@@ -34,18 +35,38 @@ public class ReceiveMessageAPI extends API {
         String chatroomId = (String) body.get("id");
         String type = (String) body.get("type");
         String content = (String) body.get("content");
-        if(chatroomId == null || type == null ||  content == null) {
+        if(chatroomId == null || type == null) {
             sender.response(400, "Incorrect request format.");
             return;
         }
 
+        // Parse file messages
+        String filename = "";
+        boolean isFileMessage = false;
+        if(type.equals(FileMessage.getType()) || type.equals((ImageMessage.getType()))) {
+            filename = (String) body.get("filename");
+            if(filename.isEmpty()) {
+                sender.response(400, "Incorrect request format.");
+                return;
+            }
+            isFileMessage = true;
+        }
+
         try {
-            request.path = "/chat/internal/send";
+            ChatMessage message = null;
+            if(isFileMessage) {
+                message = database.addFileMessage(chatroomId, user.username, type, content.getBytes(), filename);
+            }
+            else {
+                // Text messages
+                message = database.addTextMessage(chatroomId, user.username, content);
+            }
+
             Chatroom chatroom = database.getChatroom(chatroomId);
             for(String username : chatroom.usernames) {
-                if(username.compareTo(user.username) != 0) {
-                    threadMessenger.putMessage(username, request);
-                }
+                // Send the message to every user in the chat room, including the sender
+                HttpRequest internalRequest = HttpSender.makeRequest("/chat/internal/send", JsonUtils.toJson(message),"post");
+                threadMessenger.putMessage(username, internalRequest);
             }
             sender.response(200, JsonUtils.toJson(new HashMap<>()));
         }

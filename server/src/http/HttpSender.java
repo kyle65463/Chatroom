@@ -3,6 +3,7 @@ package http;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class HttpSender {
     public HttpSender(Socket socket) throws IOException {
@@ -25,6 +26,10 @@ public class HttpSender {
 
     public void post(String path, String body) {
         request(path, body, "POST", "");
+    }
+
+    public static HttpRequest makeRequest(String path, String body, String requestType) {
+        return new HttpRequest(new HashMap<>(), body, requestType, path);
     }
 
     private void request(String path, String body, String requestType, String authToken) {

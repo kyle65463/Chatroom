@@ -3,28 +3,37 @@ package database;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
+import com.google.cloud.storage.*;
+import com.google.cloud.storage.Blob;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.cloud.StorageClient;
 import models.Chatroom;
 import models.Friend;
 import models.User;
-import models.chat.ChatHistory;
-import models.chat.ChatMessage;
-import models.chat.ChatMessageFactory;
+import models.chat.*;
 import utils.JsonUtils;
 import utils.TimeUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Firestore extends Database {
+    private static com.google.cloud.firestore.Firestore db;
+    private static Bucket bucket;
+
     public static void init() throws IOException {
         GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)
+                .setStorageBucket("chatroom-ece98.appspot.com")
                 .build();
         FirebaseApp.initializeApp(options);
+        bucket = StorageClient.getInstance().bucket();
         db = FirestoreClient.getFirestore();
     }
 
@@ -175,25 +184,50 @@ public class Firestore extends Database {
         }
     }
 
-    public void appendChatMessage(String chatroomId, ChatMessage message) throws Exception {
+    public ChatMessage addFileMessage(String chatroomId, String sender, String type, byte[] file, String filename) throws Exception {
+        String messageId = UUID.randomUUID().toString();
+        FileMessage fileMessage = new FileMessage(messageId, type, file, filename, sender, chatroomId);
+
+        // Upload file to cloud storage first
+        uploadFileMessage(fileMessage);
+
+        // Clear file bytes when writing to chat history
+        fileMessage.file = null;
+        addChatMessage(fileMessage);
+        return fileMessage;
+    }
+
+    public ChatMessage addTextMessage(String chatroomId, String sender, String content) throws Exception {
+        String messageId = UUID.randomUUID().toString();
+        TextMessage textMessage = new TextMessage(messageId, content, sender, chatroomId);
+        addChatMessage(textMessage);
+        return textMessage;
+    }
+
+    private void addChatMessage(ChatMessage message) throws Exception {
         try{
             Query query = db.collection("chatHistories")
-                    .whereEqualTo("chatroomId", chatroomId)
+                    .whereEqualTo("chatroomId", message.chatroomId)
                     .limit(1).orderBy("timestamp", Query.Direction.DESCENDING);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> docs = querySnapshot.getDocuments();
             if(docs.size() > 0) {
+                // Get the most recent ChatHistory, i.e. isLast = true
                 QueryDocumentSnapshot doc = docs.get(0);
-                String id = doc.getString("id");
+                String historyId = doc.getString("id");
                 List<Map<String, Object>> messages = (List<Map<String, Object>>) doc.get("messages");
                 if(messages.size() > 25) {
                     // History is too long, create a new one
-                    createChatHistory(chatroomId, Collections.singletonList(message));
+                    createChatHistory(message.chatroomId, Collections.singletonList(message));
+                    ApiFuture<WriteResult> result = db.collection("chatHistories").document(historyId).set(
+                            Collections.singletonMap("isLast", false), SetOptions.merge()
+                    );
                 }
                 else {
                     // Append it to the last entry
                     messages.add(JsonUtils.objToMap(message));
-                    ApiFuture<WriteResult> result = db.collection("chatHistories").document(id).set(
+                    assert historyId != null;
+                    ApiFuture<WriteResult> result = db.collection("chatHistories").document(historyId).set(
                             Collections.singletonMap("messages", messages), SetOptions.merge()
                     );
                     result.get();
@@ -218,13 +252,16 @@ public class Firestore extends Database {
             boolean isLast = false;
             List<ChatMessage> messages = new ArrayList<>();
             for (QueryDocumentSnapshot doc : docs) {
+                // Parse messages of ChatHistory
                 List<Map<String, Object>> rawMessages = (List<Map<String, Object>>) doc.get("messages");
                 assert rawMessages != null;
                 for(Map<String, Object> message : rawMessages) {
                     String messageId = (String) message.get("id");
+                    String sender = (String) message.get("sender");
                     String type = (String) message.get("type");
-                    String content = (String) message.get("content");
-                    messages.add(ChatMessageFactory.parse(messageId, type, content));
+                    String content = (String) message.get("content"); // Only text message
+                    String filename = (String) message.get("filename"); // File messages
+                    messages.add(ChatMessageFactory.parse(chatroomId, messageId, sender, type, content, filename));
                 }
 
                 boolean historyIsLast = doc.getBoolean("isLast");
@@ -240,6 +277,16 @@ public class Firestore extends Database {
         } catch (Exception e) {
             throw new Exception("Get chat history error.");
         }
+    }
+
+    private void uploadFileMessage(FileMessage fileMessage) throws Exception {
+        if(fileMessage.file == null || fileMessage.id.isEmpty() || fileMessage.filename.isEmpty()) {
+            throw new Exception("File is not valid");
+        }
+        // Upload file to bucket
+        String path = fileMessage.type + "s/" + fileMessage.id;
+        byte[] file = fileMessage.file;
+        bucket.create(path, file);
     }
 
     private void createChatHistory(String chatroomId, List<ChatMessage> messages) throws Exception {
@@ -258,5 +305,4 @@ public class Firestore extends Database {
         }
     }
 
-    private static com.google.cloud.firestore.Firestore db;
 }

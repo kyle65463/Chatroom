@@ -1,16 +1,12 @@
 package models.chat;
 
 public class ChatMessageFactory {
-    public static ChatMessage parse(String id, String type, String content) {
-        if(type.compareTo(TextMessage.getType()) == 0) {
-            return new TextMessage(id, content);
+    public static ChatMessage parse(String chatroomId, String messageId, String sender, String type, String content, String filename) {
+        if(type.equals(TextMessage.getType())) {
+            return new TextMessage(messageId, content, sender, chatroomId);
         }
-        if(type.compareTo(ImageMessage.getType()) == 0) {
-            return new ImageMessage(id, content);
+        else {
+            return new FileMessage(messageId, type, null, filename, sender, chatroomId);
         }
-        if(type.compareTo(FileMessage.getType()) == 0) {
-            return new FileMessage(id, content);
-        }
-        return new TextMessage(id, content);
     }
 }

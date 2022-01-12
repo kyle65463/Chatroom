@@ -1,13 +1,15 @@
 package models.chat;
 
 public abstract class ChatMessage {
-    protected ChatMessage(String id, String type, String content) {
+    protected ChatMessage(String id, String type, String sender, String chatroomId) {
         this.id = id;
         this.type = type;
-        this.content = content;
+        this.sender = sender;
+        this.chatroomId = chatroomId;
     }
 
-    public final String id;
+    public final String chatroomId;
     public final String type;
-    public final String content;
+    public final String sender;
+    public String id;
 }
