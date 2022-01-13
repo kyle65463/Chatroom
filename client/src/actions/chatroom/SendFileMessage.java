@@ -1,11 +1,13 @@
 package actions.chatroom;
 
+import actions.StateAction;
 import actions.VoidAction;
 import http.HttpMessage;
 import http.HttpReceiver;
 import http.HttpResponse;
 import http.HttpSender;
 import models.Auth;
+import state.ClientState;
 import utils.JsonUtils;
 import utils.Scanner;
 
@@ -13,11 +15,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SendFileMessage extends VoidAction {
-    public void perform(Auth auth, HttpSender sender, HttpReceiver receiver) {
+public class SendFileMessage extends StateAction {
+    public void perform(ClientState state, Auth auth, HttpSender sender, HttpReceiver receiver) {
         try {
             Map<String, String> params = new HashMap<>();
             System.out.println("Enter file path:");
@@ -26,8 +29,8 @@ public class SendFileMessage extends VoidAction {
 
             String filename = filePath.getFileName().toString();
             byte[] file = Files.readAllBytes(filePath);
-            String fileStr = new String(file, StandardCharsets.UTF_8);
-            params.put("id", "1f6c335");
+            String fileStr = Base64.getEncoder().encodeToString(file);
+            params.put("id", state.chatroomId);
             params.put("type", "file");
             params.put("filename", filename);
             params.put("content", fileStr);

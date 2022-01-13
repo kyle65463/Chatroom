@@ -10,6 +10,7 @@ import models.User;
 import models.chat.*;
 import utils.JsonUtils;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -55,7 +56,7 @@ public class ReceiveMessageAPI extends API {
         try {
             ChatMessage message = null;
             if(isFileMessage) {
-                message = database.addFileMessage(chatroomId, user.username, type, content.getBytes(), filename);
+                message = database.addFileMessage(chatroomId, user.username, type, Base64.getDecoder().decode(content), filename);
             }
             else {
                 // Text messages

@@ -212,6 +212,10 @@ public class Firestore extends Database {
                     .limit(1).orderBy("timestamp", Query.Direction.DESCENDING);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> docs = querySnapshot.getDocuments();
+            System.out.println(docs);
+            System.out.println(message.chatroomId);
+            System.out.println(message.sender);
+            System.out.println(message.type);
             if(docs.size() > 0) {
                 // Get the most recent ChatHistory, i.e. isLast = true
                 QueryDocumentSnapshot doc = docs.get(0);
@@ -223,6 +227,7 @@ public class Firestore extends Database {
                     ApiFuture<WriteResult> result = db.collection("chatHistories").document(historyId).set(
                             Collections.singletonMap("isLast", false), SetOptions.merge()
                     );
+                    result.get();
                 }
                 else {
                     // Append it to the last entry
@@ -237,8 +242,10 @@ public class Firestore extends Database {
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Add chat message error.");
         }
+        System.out.println("NOT FOUND");
         throw new Exception("Add chat message error.");
     }
 

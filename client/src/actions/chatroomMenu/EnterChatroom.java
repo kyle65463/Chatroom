@@ -1,24 +1,18 @@
 package actions.chatroomMenu;
 
-import actions.PathAction;
-import actions.VoidAction;
-import http.HttpMessage;
+import actions.StateAction;
 import http.HttpReceiver;
-import http.HttpResponse;
 import http.HttpSender;
 import models.Auth;
 import models.Chatroom;
-import utils.JsonUtils;
+import state.ClientState;
 import utils.Scanner;
 
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
-public class EnterChatroom extends PathAction {
-    public void perform(Stack<String> pathStack, Auth auth, HttpSender sender, HttpReceiver receiver) {
+public class EnterChatroom extends StateAction {
+    public void perform(ClientState state, Auth auth, HttpSender sender, HttpReceiver receiver) {
         List<Chatroom> chatrooms = new ListChatroom(true).getChatroomList(auth, sender, receiver);
         if (chatrooms.size() == 0) return;
         if (chatrooms.size() == 1) {
@@ -31,8 +25,9 @@ public class EnterChatroom extends PathAction {
         while (true) {
             try {
                 int index = Integer.parseInt(Scanner.instance.nextLine()) - 1;
+                state.pathStack.push("chatroom");
+                state.chatroomId = chatrooms.get(index).id;
                 System.out.println("");
-                pathStack.push("chatroom");
                 return;
             } catch (Exception ignored) {
 

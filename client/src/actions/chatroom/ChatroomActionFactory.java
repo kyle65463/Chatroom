@@ -27,11 +27,7 @@ public abstract class ChatroomActionFactory {
                         return new SendFileMessage();
                     }
                     if (command == 3) {
-                        HttpMessage message = receiver.readMessage();
-                        if(message instanceof HttpResponse response) {
-                            String content = (String) response.body.get("content");
-                            System.out.println("receive: " + content);
-                        }
+                        return new ReceiveMessage();
                     }
                 }
             } catch (Exception ignored) {

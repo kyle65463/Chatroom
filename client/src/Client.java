@@ -1,5 +1,5 @@
 import actions.Action;
-import actions.PathAction;
+import actions.StateAction;
 import actions.VoidAction;
 import actions.auth.AuthAction;
 import actions.chatroom.ChatroomActionFactory;
@@ -8,10 +8,10 @@ import actions.home.HomeActionFactory;
 import http.HttpReceiver;
 import http.HttpSender;
 import models.Auth;
+import state.ClientState;
 
 import java.io.*;
 import java.net.*;
-import java.util.Stack;
 
 public class Client {
     public static void run(String serverIp, int port) {
@@ -24,7 +24,8 @@ public class Client {
             try {
                 // Handle commands
                 Auth auth = null;
-                Stack<String> pathStack = new Stack<String>();
+                ClientState state = new ClientState();
+
                 while(true) {
                     if (auth == null) {
                         AuthAction action = AuthAction.getCommand();
@@ -37,12 +38,11 @@ public class Client {
                             // Default login to home page
                             System.out.println("");
                             System.out.println("Welcome, " + auth.user.displayName + "!");
-                            pathStack.clear();
-                            pathStack.push("home");
+                            state.resetPath();
                         }
                     }
 
-                    String path = "/" + String.join("/", pathStack);
+                    String path = "/" + String.join("/", state.pathStack);
                     Action action = null;
                     if(path.compareTo("/home") == 0) {
                         action = HomeActionFactory.getAction();
@@ -57,8 +57,8 @@ public class Client {
                     if(action instanceof VoidAction voidAction) {
                         voidAction.perform(auth, sender, receiver);
                     }
-                    else if(action instanceof PathAction pathAction) {
-                        pathAction.perform(pathStack, auth, sender, receiver);
+                    else if(action instanceof StateAction stateAction) {
+                        stateAction.perform(state, auth, sender, receiver);
                     }
                     else if(action instanceof AuthAction authAction) {
                         auth = authAction.perform(sender, receiver);
