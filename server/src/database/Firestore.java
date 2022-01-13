@@ -212,10 +212,6 @@ public class Firestore extends Database {
                     .limit(1).orderBy("timestamp", Query.Direction.DESCENDING);
             QuerySnapshot querySnapshot = query.get().get();
             List<QueryDocumentSnapshot> docs = querySnapshot.getDocuments();
-            System.out.println(docs);
-            System.out.println(message.chatroomId);
-            System.out.println(message.sender);
-            System.out.println(message.type);
             if(docs.size() > 0) {
                 // Get the most recent ChatHistory, i.e. isLast = true
                 QueryDocumentSnapshot doc = docs.get(0);
@@ -245,7 +241,6 @@ public class Firestore extends Database {
             e.printStackTrace();
             throw new Exception("Add chat message error.");
         }
-        System.out.println("NOT FOUND");
         throw new Exception("Add chat message error.");
     }
 
@@ -285,6 +280,16 @@ public class Firestore extends Database {
         } catch (Exception e) {
             throw new Exception("Get chat history error.");
         }
+    }
+
+    public byte[] downloadFile(String type, String id) throws Exception {
+        if(type == null || id.isEmpty()) {
+            throw new Exception("File is not valid");
+        }
+        // Download file from bucket
+        String path = type + "s/" + id;
+        Blob blob = bucket.get(path);
+        return blob.getContent();
     }
 
     private void uploadFileMessage(FileMessage fileMessage) throws Exception {

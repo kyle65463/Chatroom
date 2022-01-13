@@ -24,4 +24,5 @@ public abstract class Database {
     public abstract ChatHistory getChatHistories(String chatroomId, int limit) throws Exception;
     public abstract ChatMessage addFileMessage(String chatroomId, String sender, String type, byte[] file, String filename) throws Exception;
     public abstract ChatMessage addTextMessage(String chatroomId, String sender, String content) throws Exception;
+    public abstract byte[] downloadFile(String type, String id) throws Exception;
 }
