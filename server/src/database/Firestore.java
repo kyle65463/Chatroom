@@ -135,6 +135,7 @@ public class Firestore extends Database {
             chatroomData.put("usernames", usernames);
             ApiFuture<WriteResult> future = db.collection("chatrooms").document(id).set(chatroomData);
             future.get();
+            createChatHistory(id, Collections.emptyList());
             return new Chatroom(id, chatroomName, usernames);
         } catch (Exception e) {
             throw new Exception("Create chatroom error.");
@@ -236,9 +237,9 @@ public class Firestore extends Database {
             }
         }
         catch (Exception e) {
-            throw new Exception("Append chat message error.");
+            throw new Exception("Add chat message error.");
         }
-        throw new Exception("Append chat message error.");
+        throw new Exception("Add chat message error.");
     }
 
     public ChatHistory getChatHistories(String chatroomId, int limit) throws Exception {
@@ -292,16 +293,20 @@ public class Firestore extends Database {
     private void createChatHistory(String chatroomId, List<ChatMessage> messages) throws Exception {
         try {
             Map<String, Object> chatHistoryData = new HashMap<>();
+            List<Map<String, Object>> rawMessages = new ArrayList<>();
+            for(ChatMessage message : messages) {
+                rawMessages.add(JsonUtils.objToMap(message));
+            }
             String id = UUID.randomUUID().toString();
             chatHistoryData.put("id", id);
             chatHistoryData.put("isLast", true);
             chatHistoryData.put("timestamp", TimeUtils.getCurrentTimeString());
             chatHistoryData.put("chatroomId", chatroomId);
-            chatHistoryData.put("messages", messages.stream().map(JsonUtils::objToMap));
-            ApiFuture<WriteResult> future = db.collection("chatrooms").document(id).set(chatHistoryData);
+            chatHistoryData.put("messages", rawMessages);
+            ApiFuture<WriteResult> future = db.collection("chatHistories").document(id).set(chatHistoryData);
             future.get();
         } catch (Exception e) {
-            throw new Exception("Create chatroom error.");
+            throw new Exception("Create chat history error.");
         }
     }
 

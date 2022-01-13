@@ -15,7 +15,8 @@ public abstract class ChatroomActionFactory {
     public static Action getAction(HttpReceiver receiver) {
         while (true) {
             System.out.println("(1) Send text message");
-            System.out.println("(2) Receive");
+            System.out.println("(2) Send file");
+            System.out.println("(3) Receive");
             try {
                 if(Scanner.instance.hasNext()) {
                     int command = Integer.parseInt(Scanner.instance.nextLine());
@@ -23,6 +24,9 @@ public abstract class ChatroomActionFactory {
                         return new SendTextMessage();
                     }
                     if (command == 2) {
+                        return new SendFileMessage();
+                    }
+                    if (command == 3) {
                         HttpMessage message = receiver.readMessage();
                         if(message instanceof HttpResponse response) {
                             String content = (String) response.body.get("content");
