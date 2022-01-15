@@ -18,8 +18,12 @@ export abstract class Message {
 	}
 
 	public static parse(message: MessageEvent<any>): Message {
-		// Classify what message it is
-		// Parse
+		const lines = (message.data as string).split("\r\n");
+		const bodyIndex = lines.findIndex((e) => e == "") + 1;
+		const body = lines[bodyIndex];
+		const status = parseInt(lines[0].split(" ")[1]);
+		const headers = lines.slice(1, bodyIndex - 1).map((line) => line.split(": ", 2));
+
 		let data: string = message.data;
 		let path_Index: number = data.indexOf("Path: /");
 		let path: string = "";

@@ -1,5 +1,6 @@
 import React from "react";
 import { Message } from "../models/message";
+import { User } from "../models/user";
 
 export class Socket {
 	constructor(webSocket: WebSocket, setMessage: (message: Message) => void) {
@@ -37,8 +38,8 @@ interface SocketContext {
 	setSocket: (socket: Socket) => void;
 	authToken?: string;
 	setAuthToken: (token: string) => void;
-	user?: string;
-	setUser: (user: string) => void;
+	user?: User;
+	setUser: (user: User) => void;
 	message?: Message;
 	setMessage: (message: Message) => void;
 }
@@ -49,7 +50,7 @@ export const SocketContext = React.createContext<SocketContext>({
 	authToken: undefined,
 	setAuthToken: (token: string) => {},
 	user: undefined,
-	setUser: (user: string) => {},
+	setUser: (user: User) => {},
 	setMessage: (message: Message) => {},
 });
 
