@@ -53,6 +53,12 @@ public class Main {
 
                     /// message exchange
                     while(true){
+                        if(web.isClosed()){
+                            web = null;
+                            while(web == null){
+                                web = webSocketServer.ReturnWebSocket();
+                            }
+                        }
                         if(csRead.ready()){
                             String message = "";
                             int value = 0;
