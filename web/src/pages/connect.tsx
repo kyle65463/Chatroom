@@ -1,19 +1,26 @@
 import { useRouter } from "next/router";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
+import { ListFriendMessage, LoginSuccessMessage } from "../models/message";
 
 function connect() {
+	const router = useRouter();
+	const { socket } = useContext(SocketContext);
 
-    const router = useRouter();
-    const { socket, setSocket } = useContext(SocketContext);
-    
-    const LOGIN = () => {
-        router.push('/login');
-    }
+	const LOGIN = () => {
+		router.push("/login");
+	};
 
     const REGISTER = () => {
         router.push('/register');
     }
+
+    useEffect(() => {
+		if (socket?.message instanceof ListFriendMessage) {
+			console.log(socket.message.friends);
+			// do sth
+		}
+	}, [socket?.message]);
 
     return (
         <div className='flex flex-col justify-center m-20'>
@@ -25,6 +32,7 @@ function connect() {
 			</div>
         </div>
     )
+
 }
 
-export default connect
+export default connect;
