@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
-import { CreateChatRoomFailed, CreateChatRoomSuccess, ListChatRoomMessage } from "../models/message";
+import { CreateChatRoomFailedMessage, CreateChatRoomSuccessMessage, JoinChatRoomFailedMessage, JoinChatRoomSuccessMessage, ListChatRoomMessage } from "../models/message";
 import { ChatRoom } from "../models/user";
 
 function ChatMenu() {
@@ -10,17 +10,29 @@ function ChatMenu() {
 	let nullchatroomlist:ChatRoom[] = [];
     const [ChatroomList, setchatroomList] = useState(nullchatroomlist);
 	const [createChatRoom, setcreateChatRoom] = useState("");
+	const [joinChatRoom, setjoinChatRoom] = useState("");
+	
 
 
 	const oncreateChatRoomChange = (e: any) => {
 		setcreateChatRoom(e.target.value);
 	};
 
+	const onjoinChatRoomChange = (e: any) => {
+		setjoinChatRoom(e.target.value);
+	};
 
 	const CREATE = () =>{
 		const body: string = JSON.stringify({name:createChatRoom});
 		if(authToken){
 			socket?.send("/chatroom/create",body,"POST",authToken);
+		}
+	}
+
+	const JOIN = () =>{
+		const body: string = JSON.stringify({id:joinChatRoom,username:user?.username});
+		if(authToken){
+			socket?.send("/chatroom/user/add",body,"POST",authToken);
 		}
 	}
 
@@ -36,16 +48,24 @@ function ChatMenu() {
 			let chatroomlist:ChatRoom[] = message.chatroomlist;
 			setchatroomList(chatroomlist);
 		}
-		if(message instanceof CreateChatRoomSuccess){
+		if(message instanceof CreateChatRoomSuccessMessage){
 			alert("Create Chat Room Success");
 			if(authToken){
 				socket?.send("/chatroom/list","{}","POST",authToken);
 			}
 		}
-		if(message instanceof CreateChatRoomFailed){
+		if(message instanceof CreateChatRoomFailedMessage){
 			alert("Create Chat Room Failed");
 		}
-		
+		if(message instanceof JoinChatRoomSuccessMessage){
+			alert("Join Chat Room Success");
+			if(authToken){
+				socket?.send("/chatroom/list","{}","POST",authToken);
+			}
+		}
+		if(message instanceof JoinChatRoomFailedMessage){
+			alert("Join Chat Room Failed");
+		}
 	}, [message]);
 
 	return (
@@ -90,6 +110,15 @@ function ChatMenu() {
 				</div>
 				<div className='m-10 btn btn-accent btn-wide'>
 					Enter
+				</div>
+				<div className="flex flex-col items-center">
+					<label htmlFor='username' className='label text-xl'>
+						Join:
+					</label>
+					<input id='password' className='input input-bordered' type='text' onChange={onjoinChatRoomChange}/>
+				</div>
+				<div className='m-10 btn btn-accent btn-wide' onClick={JOIN}>
+					Join
 				</div>
                 <Link href='/home'>
 					<div className='btn btn-wide'>BACK</div>

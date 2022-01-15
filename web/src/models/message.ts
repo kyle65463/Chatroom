@@ -52,7 +52,10 @@ export abstract class Message {
 				return new ListChatRoomMessage(headers, body);
 			}
 			if (path === "/chatroom/create"){
-				return new CreateChatRoomSuccess(headers,body);
+				return new CreateChatRoomSuccessMessage(headers,body);
+			}
+			if (path === "/chatroom/user/add"){
+				return new JoinChatRoomSuccessMessage(headers,body);
 			}
 		} else {
 			// Fail
@@ -69,7 +72,10 @@ export abstract class Message {
 				return new DeleteFriendFailedMessage(headers, body);
 			}
 			if (path === "/chatroom/create"){
-				return new CreateChatRoomFailed(headers,body);
+				return new CreateChatRoomFailedMessage(headers,body);
+			}
+			if (path === "/chatroom/user/add"){
+				return new JoinChatRoomFailedMessage(headers,body);
 			}
 		}
 		return new ErrorMessage();
@@ -154,17 +160,31 @@ export class ListChatRoomMessage extends Message {
 	public chatroomlist:ChatRoom[];
 }
 
-export class CreateChatRoomSuccess extends Message{
+export class CreateChatRoomSuccessMessage extends Message{
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
 }
 
-export class CreateChatRoomFailed extends Message{
+export class CreateChatRoomFailedMessage extends Message{
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
 }
+
+export class JoinChatRoomSuccessMessage extends Message{
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
+
+export class JoinChatRoomFailedMessage extends Message{
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
 
 
 
