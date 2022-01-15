@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Socket, SocketContext } from "../context/context";
 import { Message } from "../models/message";
 import { User } from "../models/user";
+import { ChatRoom } from "../models/user";
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -10,6 +11,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const [socket, setSocket] = useState<Socket | undefined>(undefined);
 	const [authToken, setAuthToken] = useState<string | undefined>(undefined);
 	const [user, setUser] = useState<User | undefined>(undefined);
+	const [chatroom, setChatRoom] = useState<ChatRoom | undefined>(undefined);
 
 	// if (!socket || !socket.webSocket) {
 	// 	return (
@@ -38,7 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	return (
 		<div>
 			<SocketContext.Provider
-				value={{ socket, setSocket, authToken, setAuthToken, user, setUser, message, setMessage }}
+				value={{ socket, setSocket, authToken, setAuthToken, user, setUser, message, setMessage, chatroom, setChatRoom }}
 			>
 				<Component {...pageProps} />
 			</SocketContext.Provider>

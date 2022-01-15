@@ -69,11 +69,7 @@ function Friend() {
         }
     },[])
 
-    const list = () =>{
-        if(authToken){
-            socket?.send("/friend/list","{}","POST",authToken);
-        }
-    }
+
 	return (
 		<div className='h-screen'>
 			<div className='flex flex-col items-center h-full'>
@@ -90,21 +86,21 @@ function Friend() {
                     ))}
 			    </div>
                 <div>
-				<div className="flex flex-col items-center m-5">
-					<label htmlFor='username' className='label text-xl'>
-						ADD:
-					</label>
-					<input id='addfriend' className='input input-bordered' type='text' onChange={onAddFriendChange}/>
-				</div>
-                <div className='m-10 btn btn-accent btn-wide' onClick={ADD}>
-					ADD
-				</div>
-				<div className="flex flex-col items-center">
-					<label htmlFor='username' className='label text-xl'>
-						Delete:
-					</label>
-					<input id='password' className='input input-bordered' type='text' onChange={onDeleteriendChange}/>
-				</div>
+                    <div className="flex flex-col items-center m-5">
+                        <label htmlFor='username' className='label text-xl'>
+                            ADD:
+                        </label>
+                        <input id='addfriend' className='input input-bordered' type='text' onChange={onAddFriendChange}/>
+                    </div>
+                    <div className='m-10 btn btn-accent btn-wide' onClick={ADD}>
+                        ADD
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <label htmlFor='username' className='label text-xl'>
+                            Delete:
+                        </label>
+                        <input id='password' className='input input-bordered' type='text' onChange={onDeleteriendChange}/>
+                    </div>
 				</div>
 				<div className='m-10 btn btn-accent btn-wide' onClick={DELETE}>
 					Delete

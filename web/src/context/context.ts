@@ -1,6 +1,6 @@
 import React from "react";
 import { Message } from "../models/message";
-import { User } from "../models/user";
+import { ChatRoom, User } from "../models/user";
 
 export class Socket {
 	constructor(webSocket: WebSocket, setMessage: (message: Message) => void) {
@@ -43,6 +43,8 @@ interface SocketContext {
 	setUser: (user: User) => void;
 	message?: Message;
 	setMessage: (message: Message) => void;
+	chatroom?: ChatRoom;
+	setChatRoom: (chatroom: ChatRoom) => void;
 }
 
 export const SocketContext = React.createContext<SocketContext>({
@@ -53,6 +55,8 @@ export const SocketContext = React.createContext<SocketContext>({
 	user: undefined,
 	setUser: (user: User) => {},
 	setMessage: (message: Message) => {},
+	chatroom: undefined,
+	setChatRoom: (chatroom: ChatRoom) => {},
 });
 
 export const UseSocketContext = () => React.useContext(SocketContext);

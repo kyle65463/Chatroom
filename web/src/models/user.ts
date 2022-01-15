@@ -8,3 +8,9 @@ export interface Friend {
 	username: string;
 	displayName: string;
 }
+
+export interface ChatRoom {
+	id: string;
+	name: string;
+	usernames: string[];
+}

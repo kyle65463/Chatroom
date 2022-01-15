@@ -1,4 +1,4 @@
-import { Friend, User } from "./user";
+import { ChatRoom, Friend, User } from "./user";
 
 interface Header {
 	key: string;
@@ -30,7 +30,7 @@ export abstract class Message {
 			.map((line) => ({ key: line.split(": ", 2)[0], value: line.split(": ", 2)[1] }));
 		const path = headers.find((e) => e.key === "Path")?.value;
 		if (!path) return new ErrorMessage();
-		console.log(path);
+		// console.log(path);
 		if (status === 200) {
 			// Success
 			if (path === "/login") {
@@ -48,6 +48,12 @@ export abstract class Message {
 			if (path === "/friend/delete"){
 				return new DeleteFriendSuccessMessage(headers, body);
 			}
+			if (path === "/chatroom/list"){
+				return new ListChatRoomMessage(headers, body);
+			}
+			if (path === "/chatroom/create"){
+				return new CreateChatRoomSuccess(headers,body);
+			}
 		} else {
 			// Fail
 			if (path === "/login") {
@@ -61,6 +67,9 @@ export abstract class Message {
 			}
 			if (path === "/friend/delete"){
 				return new DeleteFriendFailedMessage(headers, body);
+			}
+			if (path === "/chatroom/create"){
+				return new CreateChatRoomFailed(headers,body);
 			}
 		}
 		return new ErrorMessage();
@@ -136,6 +145,27 @@ export class DeleteFriendFailedMessage extends Message {
 		super(header, body);
 	}
 }
+
+export class ListChatRoomMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+		this.chatroomlist = body.chatrooms;
+	}
+	public chatroomlist:ChatRoom[];
+}
+
+export class CreateChatRoomSuccess extends Message{
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
+export class CreateChatRoomFailed extends Message{
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
 
 
 export class ErrorMessage extends Message {
