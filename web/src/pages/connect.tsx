@@ -1,20 +1,21 @@
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
-import { LoginSuccessMessage } from "../models/message";
+import { ListFriendMessage, LoginSuccessMessage } from "../models/message";
 
 function connect() {
 	const router = useRouter();
-	const { socket, setSocket } = useContext(SocketContext);
+	const { socket } = useContext(SocketContext);
 
 	const LOGIN = () => {
 		router.push("/login");
 	};
 
 	useEffect(() => {
-        if(socket?.message instanceof LoginSuccessMessage) {
-            // do sth
-        }
+		if (socket?.message instanceof ListFriendMessage) {
+			console.log(socket.message.friends);
+			// do sth
+		}
 	}, [socket?.message]);
 
 	return (
