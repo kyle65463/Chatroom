@@ -1,19 +1,17 @@
-import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import React, { useContext, useState } from "react";
 import { Socket, SocketContext } from "../context/context";
-import { UseSocketContext } from "../context/context";
 
 function Home() {
 	const router = useRouter();
-	const {  setSocket } = useContext(SocketContext);
+	const { setSocket, setMessage } = useContext(SocketContext);
 
 	const initSocket = () => {
-		const newsocket = new WebSocket("ws://localhost:12200");
-		newsocket.onopen = () => {
+		const socket = new WebSocket("ws://localhost:12200");
+		socket.onopen = () => {
 			console.log("open connection");
-		}
-		setSocket(new Socket(newsocket));
+		};
+		setSocket(new Socket(socket, setMessage));
 		router.push("/connect");
 	};
 

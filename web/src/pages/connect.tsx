@@ -5,7 +5,6 @@ import { ListFriendMessage, LoginSuccessMessage } from "../models/message";
 
 function connect() {
 	const router = useRouter();
-	const { socket } = useContext(SocketContext);
 
 	const LOGIN = () => {
 		router.push("/login");
@@ -14,7 +13,6 @@ function connect() {
     const REGISTER = () => {
         router.push('/register');
     }
-
 
     return (
         <div className='flex flex-col justify-center m-20'>
