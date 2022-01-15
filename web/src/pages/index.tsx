@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import React, { useContext } from "react";
 import { Socket, SocketContext } from "../context/context";
 
-function Home() {
+function LinkPage() {
 	const router = useRouter();
 	const { setSocket, setMessage } = useContext(SocketContext);
 
 	const initSocket = () => {
 		const socket = new WebSocket("ws://localhost:12200");
 		socket.onopen = () => {
-			router.push("/connect");
+			router.push("auth");
 			console.log("open connection");
 		};
 		setSocket(new Socket(socket, setMessage));
@@ -26,4 +26,4 @@ function Home() {
 	);
 }
 
-export default Home;
+export default LinkPage;
