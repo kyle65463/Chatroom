@@ -6,7 +6,7 @@ import { LoginFailedMessage, LoginSuccessMessage } from "../models/message";
 
 function LoginPage() {
 	const router = useRouter();
-	const { socket, setAuthToken, message } = useContext(SocketContext);
+	const { socket, setAuthToken, message ,setUser} = useContext(SocketContext);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -27,6 +27,8 @@ function LoginPage() {
 		if (message instanceof LoginSuccessMessage) {
 			const token = message.authToken;
 			setAuthToken(token);
+            const user = message.user;
+            setUser(user);
 			router.push("home");
 		} else if (message instanceof LoginFailedMessage) {
 			alert("LOGIN FAILED! Your username or password is wrong");

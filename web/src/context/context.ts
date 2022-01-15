@@ -9,6 +9,7 @@ export class Socket {
 		this.webSocket.onmessage = (rawMessage) => {
 			// Process message
 			console.log(rawMessage.data);
+			console.log(rawMessage);
 			const message: Message = Message.parse(rawMessage);
 			this.setMessage(message);
 		};

@@ -38,6 +38,7 @@ public class HttpSender {
                         "Content-Length: " + body.length() + "\r\n" +
                         (authToken.length() > 0 ? "Authorization: " + authToken + "\r\n" : "") +
                         "\r\n";
+        System.out.println(header + body);
         os.print(header + body);
         os.flush();
     }
