@@ -1,4 +1,3 @@
-import { SocketAddress } from "net";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
@@ -33,7 +32,7 @@ function login() {
 			// do sth
 			let token: string = message.authToken;
 			setAuthToken(token);
-			router.push("/personal");
+			router.push("/home");
 		} else if (message instanceof LoginFailedMessage) {
 			alert("LOGIN FAILED! Your username or password is wrong");
 		}
@@ -41,7 +40,7 @@ function login() {
 
 	return (
 		<div className='h-screen'>
-			<div className='flex flex-col justify-center items-center h-full'>
+			<div className='flex flex-col items-center justify-center h-full'>
 				<div>
 					<div>
 						<label htmlFor='username' className='label'>
@@ -56,7 +55,7 @@ function login() {
 						<input id='password' className='input input-bordered' type='text' onChange={onPasswordChange} />
 					</div>
 				</div>
-				<div className='btn m-10 btn-accent btn-wide' onClick={LOGIN}>
+				<div className='m-10 btn btn-accent btn-wide' onClick={LOGIN}>
 					Confirm
 				</div>
 				<div className='btn btn-wide' onClick={BACK}>

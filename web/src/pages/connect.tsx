@@ -1,7 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
-import { SocketContext } from "../context/context";
-import { ListFriendMessage, LoginSuccessMessage } from "../models/message";
+import React from "react";
 
 function connect() {
 	const router = useRouter();
@@ -10,21 +8,20 @@ function connect() {
 		router.push("/login");
 	};
 
-    const REGISTER = () => {
-        router.push('/register');
-    }
+	const REGISTER = () => {
+		router.push("/register");
+	};
 
-    return (
-        <div className='flex flex-col justify-center m-20'>
-           <div className='btn ml-6 mr-2 btn-accent m-20' onClick={LOGIN}>
+	return (
+		<div className='flex flex-col justify-center m-20'>
+			<div className='m-20 ml-6 mr-2 btn btn-accent' onClick={LOGIN}>
 				LOGIN
 			</div>
-            <div className='btn ml-6 mr-2 btn-accent' onClick={REGISTER}>
+			<div className='ml-6 mr-2 btn btn-accent' onClick={REGISTER}>
 				REGISTER
 			</div>
-        </div>
-    )
-
+		</div>
+	);
 }
 
 export default connect;

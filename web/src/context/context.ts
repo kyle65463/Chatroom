@@ -2,7 +2,7 @@ import React from "react";
 import { Message } from "../models/message";
 
 export class Socket {
-	constructor(webSocket: WebSocket, setMessage: (messgae: Message) => void) {
+	constructor(webSocket: WebSocket, setMessage: (message: Message) => void) {
 		this.webSocket = webSocket;
 		this.setMessage = setMessage;
 		this.webSocket.onmessage = (rawMessage) => {
@@ -13,7 +13,7 @@ export class Socket {
 		};
 	}
 
-	private webSocket: WebSocket | undefined;
+	public webSocket: WebSocket | undefined;
 	private setMessage: (messgae: Message) => void = () => {};
 
 	send = (path: string, body: string, requestType: string, authToken: string) => {
@@ -40,7 +40,7 @@ interface SocketContext {
 	user?: string;
 	setUser: (user: string) => void;
 	message?: Message;
-	setMessage: (message: Message) => void
+	setMessage: (message: Message) => void;
 }
 
 export const SocketContext = React.createContext<SocketContext>({

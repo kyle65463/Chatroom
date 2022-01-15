@@ -12,7 +12,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 	return (
 		<div className='bg-base-200'>
-			<SocketContext.Provider value={{ socket, setSocket, authToken, setAuthToken, user, setUser, setMessage }}>
+			<SocketContext.Provider
+				value={{ socket, setSocket, authToken, setAuthToken, user, setUser, message, setMessage }}
+			>
 				<Component {...pageProps} />
 			</SocketContext.Provider>
 		</div>
