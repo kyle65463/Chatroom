@@ -9,11 +9,13 @@
   },
   "dependencies": {
     "daisyui": "^1.16.5",
+    "express": "^4.17.2",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "socket.io": "^4.4.1",
-    "socket.io-client": "^4.4.1"
+    "socket.io-client": "^4.4.1",
+    "ws": "^8.4.1"
   },
   "devDependencies": {
     "@types/node": "16.11.13",
