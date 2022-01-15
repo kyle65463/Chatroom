@@ -13,20 +13,6 @@ function Home() {
 		newsocket.onopen = () => {
 			console.log("open connection");
 		}
-		
-		router.push('/connect');
-			let body: string = JSON.stringify({ username: "luca", password: "luca0514" });
-			let header: string =
-				"POST" +
-				" " +
-				"/login" +
-				" HTTP/1.1\r\n" +
-				"Host:localhost\r\n" +
-				"Content-Length: " +
-				body.length +
-				"\r\n" +
-				"\r\n";
-			newsocket.send(header + body);
 		setSocket(new Socket(newsocket));
 		router.push("/connect");
 	};
@@ -35,7 +21,7 @@ function Home() {
 		<div className='h-screen'>
 			<div className='flex flex-col justify-center items-center h-full bg-gray-500'>
 				<div className='btn ml-6 mr-2 btn-accent text-5xl' onClick={initSocket}>
-					Connect
+					Link Start
 				</div>
 			</div>
 		</div>

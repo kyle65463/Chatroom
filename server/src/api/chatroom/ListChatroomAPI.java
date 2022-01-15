@@ -24,19 +24,19 @@ public class ListChatroomAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path, "No authorization.");
             return;
         }
 
         try {
             // Get chatrooms
             List<Chatroom> chatrooms = database.getChatrooms(user.chatroomIds);
-            sender.response(200, JsonUtils.toJson(Collections.singletonMap("chatrooms", chatrooms)));
+            sender.response(200, request.path, JsonUtils.toJson(Collections.singletonMap("chatrooms", chatrooms)));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

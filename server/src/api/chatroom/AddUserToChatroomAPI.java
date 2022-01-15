@@ -22,7 +22,7 @@ public class AddUserToChatroomAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path, "No authorization.");
             return;
         }
 
@@ -31,7 +31,7 @@ public class AddUserToChatroomAPI extends API {
         String chatroomId = (String) body.get("id");
         String username = (String) body.get("username");
         if(chatroomId == null || username == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
@@ -45,12 +45,12 @@ public class AddUserToChatroomAPI extends API {
             User newUser = database.getUser(username);
             newUser.chatroomIds.add(chatroomId);
             database.updateUser(newUser);
-            sender.response(200, JsonUtils.toJson(chatroom));
+            sender.response(200, request.path, JsonUtils.toJson(chatroom));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

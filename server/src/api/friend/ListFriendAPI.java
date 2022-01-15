@@ -24,7 +24,7 @@ public class ListFriendAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path, "No authorization.");
             return;
         }
         System.out.println("LIST");
@@ -33,12 +33,12 @@ public class ListFriendAPI extends API {
         try {
             List<Friend> friends = database.getFriends(user.friendIds);
             System.out.println(friends);
-            sender.response(200, JsonUtils.toJson(Collections.singletonMap("friends", friends)));
+            sender.response(200, request.path, JsonUtils.toJson(Collections.singletonMap("friends", friends)));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

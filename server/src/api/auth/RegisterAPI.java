@@ -23,19 +23,19 @@ public class RegisterAPI extends API {
         String password = (String) body.get("password");
         String displayName = (String) body.get("displayName");
         if(username == null || password == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400,request.path,"Incorrect request format.");
             return;
         }
 
         try {
             User user = database.createUser(displayName, username, password);
             String authToken = generateJWTToken(user.username);
-            sender.response(200, JsonUtils.toJson(new RegisterAPIResponse(authToken, user)));
+            sender.response(200,request.path,JsonUtils.toJson(new RegisterAPIResponse(authToken, user)));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400,request.path,JsonUtils.toJson(output));
         }
     }
 }

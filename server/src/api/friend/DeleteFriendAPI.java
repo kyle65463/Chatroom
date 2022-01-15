@@ -20,7 +20,7 @@ public class DeleteFriendAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path, "No authorization.");
             return;
         }
 
@@ -28,13 +28,13 @@ public class DeleteFriendAPI extends API {
         Map<String, Object> body = request.body;
         String friendId = (String) body.get("username");
         if(friendId == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
         // Check if not have the friend
         if(!user.friendIds.contains(friendId)) {
-            sender.response(400, "You don't have this friend.");
+            sender.response(400, request.path, "You don't have this friend.");
             return;
         }
 
@@ -42,12 +42,12 @@ public class DeleteFriendAPI extends API {
             // Update user
             user.friendIds.removeIf(id -> id.compareTo(friendId) == 0);
             database.updateUser(user);
-            sender.response(200, JsonUtils.toJson(new HashMap<>()));
+            sender.response(200, request.path, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

@@ -1,11 +1,13 @@
+import { SocketAddress } from "net";
 import { useRouter } from "next/router";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
+import { LoginFailedMessage, LoginSuccessMessage } from "../models/message";
 
 function login() {
 
     const router = useRouter();
-    const { socket, setSocket } = useContext(SocketContext);
+    const { socket, setSocket , setAuthToken } = useContext(SocketContext);
     
     const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -20,15 +22,23 @@ function login() {
 
     const LOGIN = () => {
         let body:string = JSON.stringify({ username: username, password: password });
-		let header:string = "POST" + " " + "/login" + " HTTP/1.1\r\n" +
-                        "Host:localhost\r\n" +
-                        "Content-Length: " + body.length + "\r\n" + "\r\n";
-		socket?.send(header + body);
+		socket?.send("/login",body,"POST","");
     }
 
     const BACK = () =>{
         router.push('/connect');
     }
+
+    useEffect(() => {
+		if (socket?.message instanceof LoginSuccessMessage) {
+			// do sth
+            let token:string = socket.message.authToken;
+            setAuthToken(token);
+            router.push('/personal');
+		}else if(socket?.message instanceof LoginFailedMessage){
+            alert("LOGIN FAILED! Your username or password is wrong");
+        }
+	}, [socket?.message]);
 
     return (
         <div className='h-screen'>

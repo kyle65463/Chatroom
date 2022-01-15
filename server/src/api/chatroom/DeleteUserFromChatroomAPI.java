@@ -22,7 +22,7 @@ public class DeleteUserFromChatroomAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path, "No authorization.");
             return;
         }
 
@@ -30,13 +30,13 @@ public class DeleteUserFromChatroomAPI extends API {
         Map<String, Object> body = request.body;
         String chatroomId = (String) body.get("id");
         if(chatroomId == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
         // Check if not have the chatroom
         if(!user.chatroomIds.contains(chatroomId)) {
-            sender.response(400, "You don't have this friend.");
+            sender.response(400, request.path, "You don't have this friend.");
             return;
         }
 
@@ -49,12 +49,12 @@ public class DeleteUserFromChatroomAPI extends API {
             // Update user
             user.chatroomIds.removeIf(id -> id.compareTo(chatroomId) == 0);
             database.updateUser(user);
-            sender.response(200, JsonUtils.toJson(new HashMap<>()));
+            sender.response(200, request.path, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

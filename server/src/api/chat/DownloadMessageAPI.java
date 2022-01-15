@@ -25,7 +25,7 @@ public class DownloadMessageAPI extends API {
         String messageId = (String) body.get("messageId");
         String type = (String) body.get("type");
         if (chatroomId == null || messageId == null || type == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path,"Incorrect request format.");
             return;
         }
 
@@ -34,11 +34,11 @@ public class DownloadMessageAPI extends API {
             String fileStr = Base64.getEncoder().encodeToString(file);
             Map<String, Object> output = new HashMap<>();
             output.put("file", fileStr);
-            sender.response(200, JsonUtils.toJson(output));
+            sender.response(200, request.path,JsonUtils.toJson(output));
         } catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path,JsonUtils.toJson(output));
         }
     }
 }

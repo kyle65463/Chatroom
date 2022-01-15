@@ -29,7 +29,7 @@ public class GetChatHistoriesAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path,"No authorization.");
             return;
         }
 
@@ -38,18 +38,18 @@ public class GetChatHistoriesAPI extends API {
         String chatroomId = (String) body.get("id");
         int limit = Integer.parseInt((String) body.get("limit"));
         if(chatroomId == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
         try {
             ChatHistory history = database.getChatHistories(chatroomId, limit);
-            sender.response(200, JsonUtils.toJson(history));
+            sender.response(200, request.path, JsonUtils.toJson(history));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

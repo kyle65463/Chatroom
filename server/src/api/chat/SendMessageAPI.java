@@ -27,7 +27,7 @@ public class SendMessageAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path,"No authorization.");
             return;
         }
 
@@ -37,7 +37,7 @@ public class SendMessageAPI extends API {
         String type = (String) body.get("type");
         String content = (String) body.get("content");
         if(chatroomId == null || type == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
@@ -47,7 +47,7 @@ public class SendMessageAPI extends API {
         if(type.equals(FileMessage.getType()) || type.equals((ImageMessage.getType()))) {
             filename = (String) body.get("filename");
             if(filename.isEmpty()) {
-                sender.response(400, "Incorrect request format.");
+                sender.response(400, request.path, "Incorrect request format.");
                 return;
             }
             isFileMessage = true;
@@ -69,12 +69,12 @@ public class SendMessageAPI extends API {
                 HttpRequest internalRequest = HttpSender.makeRequest("/chat/internal/send", JsonUtils.toJson(message),"post");
                 threadMessenger.putMessage(username, internalRequest);
             }
-            sender.response(200, JsonUtils.toJson(new HashMap<>()));
+            sender.response(200, request.path, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

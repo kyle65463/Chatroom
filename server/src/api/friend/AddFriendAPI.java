@@ -20,7 +20,7 @@ public class AddFriendAPI extends API {
         // Authenticate token
         User user = authenticate(request, database);
         if(user == null) {
-            sender.response(400, "No authorization.");
+            sender.response(400, request.path, "No authorization.");
             return;
         }
 
@@ -28,14 +28,14 @@ public class AddFriendAPI extends API {
         Map<String, Object> body = request.body;
         String friendId = (String) body.get("username");
         if(friendId == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
         // Check if already have the same friend
         for(String id : user.friendIds) {
             if(id.compareTo(friendId) == 0) {
-                sender.response(400, "You already have this friend.");
+                sender.response(400, request.path, "You already have this friend.");
                 return;
             }
         }
@@ -44,21 +44,21 @@ public class AddFriendAPI extends API {
             // Check if user exists
             User newFriend = database.getUser(friendId);
             if(newFriend == null) {
-                sender.response(400, "User not found.");
+                sender.response(400, request.path, "User not found.");
                 return;
             }
 
             // Add friend to user
             user.friendIds.add(friendId);
             database.updateUser(user);
-            sender.response(200, JsonUtils.toJson(new HashMap<>()));
+            sender.response(200, request.path, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
             e.printStackTrace();
             System.out.println(user.friendIds);
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

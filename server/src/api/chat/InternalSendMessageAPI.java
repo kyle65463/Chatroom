@@ -26,16 +26,16 @@ public class InternalSendMessageAPI extends API {
         String type = (String) body.get("type");
         String content = (String) body.get("content");
         if (chatroomId == null || type == null || content == null) {
-            sender.response(400, "Incorrect request format.");
+            sender.response(400, request.path, "Incorrect request format.");
             return;
         }
 
         try {
-            sender.response(200, JsonUtils.toJson(request.body));
+            sender.response(200, request.path,JsonUtils.toJson(request.body));
         } catch (Exception e) {
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }

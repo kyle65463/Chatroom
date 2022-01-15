@@ -15,12 +15,6 @@ function connect() {
         router.push('/register');
     }
 
-    useEffect(() => {
-		if (socket?.message instanceof ListFriendMessage) {
-			console.log(socket.message.friends);
-			// do sth
-		}
-	}, [socket?.message]);
 
     return (
         <div className='flex flex-col justify-center m-20'>

@@ -6,15 +6,21 @@ export class Socket {
 		this.webSocket = webSocket;
 		this.webSocket.onmessage = (rawMessage) => {
 			// Process message
-			const message: Message = Message.parse(rawMessage)
+			console.log(rawMessage.data);
+			const message: Message = Message.parse(rawMessage);
 			this.message = message;
 		};
 	}
 
 	public webSocket: WebSocket | undefined;
 
-	send = (payload: string) => {
-		this.webSocket?.send(payload);
+	send = (path: string,body:string,requestType:string,authToken:string) => {
+		let header:string = requestType + " " + path + " HTTP/1.1\r\n" +
+                        "Host:localhost\r\n" +
+                        "Content-Length: " + body.length + "\r\n" +
+                        (authToken.length > 0 ? "Authorization: " + authToken + "\r\n" : "") +
+                        "\r\n";
+		this.webSocket?.send(header + body);
 	};
 
 	public message: Message | undefined;
@@ -25,6 +31,8 @@ interface SocketContext {
 	setSocket: (socket: Socket) => void;
 	authToken?: string;
 	setAuthToken: (token: string) => void;
+	user?:string;
+	setUser: (user: string) => void;
 }
 
 export const SocketContext = React.createContext<SocketContext>({
@@ -32,6 +40,8 @@ export const SocketContext = React.createContext<SocketContext>({
 	setSocket: (socket: Socket) => {},
 	authToken: undefined,
 	setAuthToken: (token: string) => {},
+	user: undefined,
+	setUser: (user: string) => {}
 });
 
 export const UseSocketContext = () => React.useContext(SocketContext);

@@ -44,7 +44,6 @@ public class WebServer extends WebSocketServer {
         System.out.println("Message from client: " + message);
         ToServer.print(message);
         ToServer.flush();
-        conn.send(message);
     }
 
     @Override

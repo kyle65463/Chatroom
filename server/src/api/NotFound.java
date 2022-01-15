@@ -12,6 +12,6 @@ public class NotFound extends API {
 
     @Override
     public void handle(HttpRequest request, HttpSender sender, Database database) {
-        sender.response(404, "Not found");
+        sender.response(404, request.path, "Not found");
     }
 }
