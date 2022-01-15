@@ -34,7 +34,7 @@ public class HttpSender {
 
     private void request(String path, String body, String requestType, String authToken) {
         String header = requestType + " " + path + " HTTP/1.1\r\n" +
-                        "Host:localhost\r\n" +
+                        "Host: localhost\r\n" +
                         "Content-Length: " + body.length() + "\r\n" +
                         (authToken.length() > 0 ? "Authorization: " + authToken + "\r\n" : "") +
                         "\r\n";
@@ -45,7 +45,7 @@ public class HttpSender {
     public void response(int status,String path, String body) {
         String message = status == 200 ? "OK" : status == 400 ? "Bad Request" : "Server Error";
         String header = "HTTP/1.1 " + status + " " + message +"/1.1\r\n" + "Path: "+ path + "\r\n"
-                + "Host:localhost\r\nContent-Length: " + body.length() + "\r\n" + "\r\n";
+                + "Host: localhost\r\nContent-Length: " + body.length() + "\r\n" + "\r\n";
         os.print(header + body);
         os.flush();
     }
