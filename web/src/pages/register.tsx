@@ -18,12 +18,10 @@ function login() {
 		setPassword(e.target.value);
 	};
 
-    const LOGIN = () => {
-        let body:string = JSON.stringify({ username: username, password: password });
-		let header:string = "POST" + " " + "/login" + " HTTP/1.1\r\n" +
-                        "Host:localhost\r\n" +
-                        "Content-Length: " + body.length + "\r\n" + "\r\n";
-		socket?.send(header + body);
+    const REGISTER = () => {
+        ////////////////////////
+        alert('this account: ' + username + ' already in used ');
+        router.push('connect');
     }
 
     const BACK = () =>{
@@ -44,11 +42,11 @@ function login() {
 						<label htmlFor='username' className='label'>
 							Password:
 						</label>
-						<input id='password' className='input input-bordered' type='text' onChange={onPasswordChange}/>
+						<input id='username' className='input input-bordered' type='text' onChange={onPasswordChange}/>
 					</div>
                 </div>
-                <div className='btn m-10 btn-accent btn-wide' onClick={LOGIN}>
-					Confirm
+                <div className='btn m-10 btn-accent btn-wide' onClick={REGISTER}>
+					REGISTER
 				</div>
 				<div className='btn btn-wide' onClick={BACK}>
 					BACK

@@ -14,11 +14,6 @@ function Home() {
 		const newsocket = new WebSocket("ws://localhost:12200");
 		newsocket.onopen = () =>{
 			console.log("open connection");
-			let body:string = JSON.stringify({ username: "luca", password: "luca0514" });
-			let header:string = "POST" + " " + "/login" + " HTTP/1.1\r\n" +
-                        "Host:localhost\r\n" +
-                        "Content-Length: " + body.length + "\r\n" + "\r\n";
-			newsocket.send(header + body);
 		}
 		newsocket.onmessage = (event) =>{
 			console.log(event.data);
