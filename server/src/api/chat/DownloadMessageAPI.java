@@ -41,6 +41,7 @@ public class DownloadMessageAPI extends API {
             output.put("file", fileStr);
             output.put("filename", filename);
             output.put("type", type);
+            output.put("id", messageId);
             System.out.println(fileStr.length());
             sender.response(200, request.path, JsonUtils.toJson(output));
         } catch (Exception e) {

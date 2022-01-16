@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { SocketContext } from "../context/context";
 import { ChatMessage } from "../models/chatmessage";
+import { DownloadFileSuccessMessage } from "../models/message";
 import { User } from "../models/user";
 
 interface Props {
@@ -20,10 +22,35 @@ function ChatMessageBox({ user, chatMessage, onDownloadFile }: Props) {
 	const { sender } = chatMessage;
 	const displayContent = getDisplayContent(chatMessage);
 	const canDownload = chatMessage.type === "file";
-	const isSender = sender == user?.username;
+	const [imgData, setImgData] = useState<string | undefined>();
+
+	const { message, authToken, chatroom, socket } = useContext(SocketContext);
+	const Img = () => <img src={`data:image/jpeg;base64,${imgData}`} />;
+
+	useEffect(() => {
+		if (chatMessage.type === "image") {
+			if (authToken) {
+				const body = {
+					id: chatroom?.id,
+					type: "image",
+					filename: chatMessage.filename,
+					messageId: chatMessage.id,
+				};
+				socket?.send("/chat/download", JSON.stringify(body), "POST", authToken);
+			}
+		}
+	}, []);
+
+	useEffect(() => {
+		if (message instanceof DownloadFileSuccessMessage) {
+			if (message.type === "image" && message.id === chatMessage.id) {
+				setImgData(message.file);
+			}
+		}
+	}, [message]);
 
 	return (
-		<div className={`flex ml-20`}>
+		<div className={`flex ml-20 max-w-[500px]`}>
 			<div className='py-2'>
 				<p className={`font-semibold pb-0.5`}>{sender}:</p>
 				<div
@@ -31,7 +58,7 @@ function ChatMessageBox({ user, chatMessage, onDownloadFile }: Props) {
 					onClick={canDownload ? () => onDownloadFile(chatMessage) : () => {}}
 				>
 					<div className={`mx-4 my-2 overflow-hidden ${canDownload ? "font-bold text-primary" : ""}`}>
-						{displayContent}
+						{imgData == undefined ? displayContent : <Img />}
 					</div>
 				</div>
 			</div>

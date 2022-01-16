@@ -1,4 +1,4 @@
-import { encode } from "base64-arraybuffer";
+import { decode, encode } from "base64-arraybuffer";
 import imageType from "image-type";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -34,7 +34,9 @@ function Home() {
 			setChatMessages(message.messages);
 		}
 		if (message instanceof DownloadFileSuccessMessage) {
-			createAndDownloadFile(message.file, message.filename);
+			if (message.type === "file") {
+				createAndDownloadFile(decode(message.file), message.filename);
+			}
 		}
 	}, [message]);
 

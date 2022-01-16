@@ -1,4 +1,3 @@
-import { decode } from "base64-arraybuffer";
 import { ChatMessage } from "./chatmessage";
 import { ChatRoom, Friend, User } from "./user";
 
@@ -219,15 +218,16 @@ export class GetChatHistoriesFailedMessage extends Message {
 export class DownloadFileSuccessMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
-		const rawFile: string = body.file;
-		this.file = decode(rawFile);
+		this.file = body.file;
 		this.filename = body.filename;
 		this.type = body.type;
+		this.id = body.id;
 	}
 
-	public file: ArrayBuffer;
+	public file: string;
 	public filename: string;
 	public type: string;
+	public id: string;
 }
 
 export class DownloadFileFailedMessage extends Message {
