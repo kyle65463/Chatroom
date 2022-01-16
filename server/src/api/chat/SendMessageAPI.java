@@ -63,12 +63,12 @@ public class SendMessageAPI extends API {
                 message = database.addTextMessage(chatroomId, user.username, content);
             }
 
-            Chatroom chatroom = database.getChatroom(chatroomId);
-            for(String username : chatroom.usernames) {
-                // Send the message to every user in the chat room, including the sender
-                HttpRequest internalRequest = HttpSender.makeRequest("/chat/internal/send", JsonUtils.toJson(message),"post");
-                threadMessenger.putMessage(username, internalRequest);
-            }
+//            Chatroom chatroom = database.getChatroom(chatroomId);
+//            for(String username : chatroom.usernames) {
+//                // Send the message to every user in the chat room, including the sender
+//                HttpRequest internalRequest = HttpSender.makeRequest("/chat/internal/send", JsonUtils.toJson(message),"post");
+//                threadMessenger.putMessage(username, internalRequest);
+//            }
             sender.response(200, request.path, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {

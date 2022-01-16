@@ -8,30 +8,33 @@ import http.HttpSender;
 import models.Auth;
 import models.chat.TextMessage;
 import state.ClientState;
+import utils.JsonUtils;
+import utils.Scanner;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ReceiveMessage extends StateAction {
     public void perform(ClientState state, Auth auth, HttpSender sender, HttpReceiver receiver) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", state.chatroomId);
+        params.put("limit", "1");
+        sender.post("/chat/histories", JsonUtils.toJson(params), auth.authToken);
+
         try {
             HttpMessage message = receiver.readMessage();
             if(message instanceof HttpResponse response) {
                 if(response.status == 200) {
-                    String chatroomId = (String) response.body.get("chatroomId");
-                    String messageId = (String) response.body.get("id");
-                    String senderUsername = (String) response.body.get("sender");
-                    String type = (String) response.body.get("type");
-
-                    String output = "";
-                    if(type.equals(TextMessage.getType())) {
-                        output = (String) response.body.get("content");
-
+                    List<Map<Object, String>> messages = (List<Map<Object, String>>) response.body.get("messages");
+                    for(Map<Object, String> chatMessage : messages) {
+                        System.out.printf("%s");
+                        if(chatMessage.get("type").equals("text")) {
+                            System.out.println();
+                        }
                     }
-                    else {
-                        // File messages
-                        String filename = (String) response.body.get("filename");
-                        output = filename + "(" + messageId + ")";
-                    }
-
-                    System.out.println(senderUsername + ": " + output);
+                    System.out.println(response.body);
+                    System.out.println("RECEIVE OK");
                 }
                 else {
                     // Request failed
@@ -40,7 +43,6 @@ public class ReceiveMessage extends StateAction {
             }
         }
         catch (Exception ignored) {
-            ignored.printStackTrace();
         }
     }
 }
