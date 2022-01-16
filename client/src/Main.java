@@ -74,7 +74,7 @@ public class Main {
                                 char c = (char) value;
                                 message += Character.toString(c);
                             }
-                            System.out.println(message.toString());
+//                            System.out.println(message.toString());
                             if(!web.isClosed()) {
                                 try{
                                     web.send(message.toString());

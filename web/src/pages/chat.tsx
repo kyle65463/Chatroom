@@ -73,7 +73,7 @@ function Home() {
 		if (file && fileInputRef.current && authToken) {
 			const reader = new FileReader();
 			reader.readAsArrayBuffer(file);
-			reader.onloadend = (event: any) => {
+			reader.onload = (event: any) => {
 				const result: ArrayBuffer = event.target.result;
 				const isImage = imageType(new Uint8Array(result));
 				const base64 = encode(result);

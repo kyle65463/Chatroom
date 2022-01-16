@@ -7,11 +7,12 @@ export class Socket {
 		this.webSocket = webSocket;
 		this.setMessage = setMessage;
 		this.webSocket.onmessage = (rawMessage) => {
-			// Process message
-			console.log(rawMessage.data);
-			console.log(rawMessage);
 			const message: Message = Message.parse(rawMessage);
 			this.setMessage(message);
+		};
+		this.webSocket.onerror = (rawMessage) => {
+			console.log("error");
+			console.log(rawMessage);
 		};
 	}
 
@@ -30,8 +31,12 @@ export class Socket {
 			"\r\n" +
 			(authToken.length > 0 ? "Authorization: " + authToken + "\r\n" : "") +
 			"\r\n";
-		this.webSocket?.send(header + body);
-		console.log(header + body);
+		this.webSocket?.send(header);
+		let offset = 0;
+		while (offset < body.length) {
+			this.webSocket?.send(body.substring(offset, Math.min(offset + 10000, body.length)));
+			offset += 10000;
+		}
 	};
 }
 
