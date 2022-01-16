@@ -19,9 +19,11 @@ public class DownloadMessageAPI extends API {
     // Should only be called by other threads
     @Override
     public void handle(HttpRequest request, HttpSender sender, Database database) {
+        System.out.println("download");
         // Parse request
         Map<String, Object> body = request.body;
         String chatroomId = (String) body.get("id");
+        String filename = (String) body.get("filename");
         String messageId = (String) body.get("messageId");
         String type = (String) body.get("type");
         if (chatroomId == null || messageId == null || type == null) {
@@ -34,6 +36,8 @@ public class DownloadMessageAPI extends API {
             String fileStr = Base64.getEncoder().encodeToString(file);
             Map<String, Object> output = new HashMap<>();
             output.put("file", fileStr);
+            output.put("filename", filename);
+            output.put("type", type);
             sender.response(200, request.path,JsonUtils.toJson(output));
         } catch (Exception e) {
             Map<String, String> output = new HashMap<>();

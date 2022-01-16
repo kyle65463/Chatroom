@@ -5,7 +5,21 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import ChatMessageBox from "../components/ChatMessageBox";
 import { SocketContext } from "../context/context";
 import { ChatMessage } from "../models/chatmessage";
-import { GetChatHistoriesSuccessMessage } from "../models/message";
+import { DownloadFileSuccessMessage, GetChatHistoriesSuccessMessage } from "../models/message";
+
+export function createAndDownloadFile(body: ArrayBuffer, filename: string) {
+	const blob = new Blob([body]);
+	const link = document.createElement("a");
+	if (link.download !== undefined) {
+		const url = URL.createObjectURL(blob);
+		link.setAttribute("href", url);
+		link.setAttribute("download", filename);
+		link.style.visibility = "hidden";
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+}
 
 function Home() {
 	const router = useRouter();
@@ -18,6 +32,9 @@ function Home() {
 	useEffect(() => {
 		if (message instanceof GetChatHistoriesSuccessMessage) {
 			setChatMessages(message.messages);
+		}
+		if (message instanceof DownloadFileSuccessMessage) {
+			createAndDownloadFile(message.file, message.filename);
 		}
 	}, [message]);
 
@@ -48,8 +65,6 @@ function Home() {
 		// Send a file message
 		if (authToken && fileInputRef.current) {
 			fileInputRef.current.click();
-			// const body = JSON.stringify({ id: chatroom?.id, type: "text", content: textMessage });
-			// socket?.send("/chat/send", body, "POST", authToken);
 		}
 	};
 
@@ -68,9 +83,22 @@ function Home() {
 					filename: file.name,
 					content: base64,
 				};
-				alert("Uploading file...");
 				socket?.send("/chat/send", JSON.stringify(body), "POST", authToken);
+				alert("Uploading file...");
 			};
+		}
+	};
+
+	const onDownloadFile = (message: ChatMessage) => {
+		if (authToken) {
+			const body = {
+				id: chatroom?.id,
+				type: message.type,
+				filename: message.filename,
+				messageId: message.id,
+			};
+			socket?.send("/chat/download", JSON.stringify(body), "POST", authToken);
+			alert("Downloading file...");
 		}
 	};
 
@@ -82,7 +110,7 @@ function Home() {
 	const onRefresh = () => {
 		if (authToken) {
 			const body = JSON.stringify({ id: chatroom?.id, limit: "1" });
-			socket?.send("/chat/histories", body, "POST", authToken);
+			// socket?.send("/chat/histories", body, "POST", authToken);
 		}
 	};
 
@@ -101,13 +129,12 @@ function Home() {
 					<div className='flex justify-center overflow-y-scroll h-[84%]'>
 						<div className='flex flex-col justify-center'>
 							{chatMessages.map((chatMessage, i) => (
-								<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
-							))}
-							{chatMessages.map((chatMessage, i) => (
-								<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
-							))}
-							{chatMessages.map((chatMessage, i) => (
-								<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
+								<ChatMessageBox
+									user={user}
+									chatMessage={chatMessage}
+									onDownloadFile={onDownloadFile}
+									key={i}
+								/>
 							))}
 						</div>
 					</div>

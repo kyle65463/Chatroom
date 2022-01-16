@@ -31,6 +31,7 @@ export class Socket {
 			(authToken.length > 0 ? "Authorization: " + authToken + "\r\n" : "") +
 			"\r\n";
 		this.webSocket?.send(header + body);
+		console.log(header + body);
 	};
 }
 

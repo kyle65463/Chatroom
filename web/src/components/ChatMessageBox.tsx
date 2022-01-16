@@ -5,25 +5,32 @@ import { User } from "../models/user";
 interface Props {
 	user?: User;
 	chatMessage: ChatMessage;
+	onDownloadFile: (message: ChatMessage) => void;
 }
 
 function getDisplayContent({ sender, id, type, content, filename }: ChatMessage) {
 	if (type === "text") {
 		return content;
 	} else {
-		return `[${type}]${filename} (id=${id})`;
+		return filename;
 	}
 }
 
-function ChatMessageBox({ user, chatMessage }: Props) {
+function ChatMessageBox({ user, chatMessage, onDownloadFile }: Props) {
 	const { sender } = chatMessage;
 	const displayContent = getDisplayContent(chatMessage);
+	const canDownload = chatMessage.type === "file";
 
 	return (
 		<div className='py-2'>
 			<p className='font-semibold pb-0.5'>{sender}:</p>
-			<div className='bg-white shadow card card-compact'>
-				<div className='mx-4 my-2 overflow-hidden'>{displayContent}</div>
+			<div
+				className={`bg-white shadow card card-compact ${canDownload ? "hover:cursor-pointer" : ""}`}
+				onClick={() => onDownloadFile(chatMessage)}
+			>
+				<div className={`mx-4 my-2 overflow-hidden ${canDownload ? "font-bold text-accent" : ""}`}>
+					{displayContent}
+				</div>
 			</div>
 		</div>
 	);

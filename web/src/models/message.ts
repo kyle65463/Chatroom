@@ -1,3 +1,4 @@
+import { decode } from "base64-arraybuffer";
 import { ChatMessage } from "./chatmessage";
 import { ChatRoom, Friend, User } from "./user";
 
@@ -61,6 +62,9 @@ export abstract class Message {
 			if (path === "/chat/histories") {
 				return new GetChatHistoriesSuccessMessage(headers, body);
 			}
+			if (path === "/chat/download") {
+				return new DownloadFileSuccessMessage(headers, body);
+			}
 		} else {
 			// Fail
 			if (path === "/login") {
@@ -83,6 +87,9 @@ export abstract class Message {
 			}
 			if (path === "/chat/histories") {
 				return new GetChatHistoriesFailedMessage(headers, body);
+			}
+			if (path === "/chat/download") {
+				return new DownloadFileFailedMessage(headers, body);
 			}
 		}
 		return new ErrorMessage();
@@ -200,6 +207,26 @@ export class GetChatHistoriesSuccessMessage extends Message {
 }
 
 export class GetChatHistoriesFailedMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
+export class DownloadFileSuccessMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+		const rawFile: string = body.file;
+		this.file = decode(rawFile);
+		this.filename = body.filename;
+		this.type = body.type;
+	}
+
+	public file: ArrayBuffer;
+	public filename: string;
+	public type: string;
+}
+
+export class DownloadFileFailedMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}

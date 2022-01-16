@@ -36,6 +36,8 @@ public class SendMessageAPI extends API {
         String chatroomId = (String) body.get("id");
         String type = (String) body.get("type");
         String content = (String) body.get("content");
+        System.out.println("HANDLE SEND");
+        System.out.println(body);
         if(chatroomId == null || type == null) {
             sender.response(400, request.path, "Incorrect request format.");
             return;
@@ -72,6 +74,7 @@ public class SendMessageAPI extends API {
             sender.response(200, request.path, JsonUtils.toJson(new HashMap<>()));
         }
         catch (Exception e) {
+            e.printStackTrace();
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
             sender.response(400, request.path, JsonUtils.toJson(output));
