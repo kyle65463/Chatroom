@@ -46,7 +46,7 @@ public class ListChatroom extends VoidAction {
                         if(showIndex) {
                             prefix = "(" + i + ") ";
                         }
-                        System.out.println(prefix + chatroom.name + " (" + chatroom .usernames.size() + " users)");
+                        System.out.println(prefix + chatroom.name + " (" + chatroom .usernames.size() + " users) " + "id=" + chatroom.id);
                         i++;
                     }
                     System.out.println("");
