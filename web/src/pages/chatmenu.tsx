@@ -3,7 +3,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
-import { CreateChatRoomFailedMessage, CreateChatRoomSuccessMessage, JoinChatRoomFailedMessage, JoinChatRoomSuccessMessage, ListChatRoomMessage } from "../models/message";
+import {
+	CreateChatRoomFailedMessage,
+	CreateChatRoomSuccessMessage,
+	JoinChatRoomFailedMessage,
+	JoinChatRoomSuccessMessage,
+	ListChatRoomMessage,
+} from "../models/message";
 import { ChatRoom } from "../models/user";
 
 function ChatMenu() {
@@ -34,12 +40,12 @@ function ChatMenu() {
 		if(authToken){
 			socket?.send("/chatroom/create",body,"POST",authToken);
 		}
-	}
+	};
 
-	const JOIN = () =>{
-		const body: string = JSON.stringify({id:joinChatRoom,username:user?.username});
-		if(authToken){
-			socket?.send("/chatroom/user/add",body,"POST",authToken);
+	const JOIN = () => {
+		const body: string = JSON.stringify({ id: joinChatRoom, username: user?.username });
+		if (authToken) {
+			socket?.send("/chatroom/user/add", body, "POST", authToken);
 		}
 	}
 
@@ -59,61 +65,56 @@ function ChatMenu() {
         }
     },[])
 
+	useEffect(() => {
+		if (authToken) {
+			socket?.send("/chatroom/list", "{}", "POST", authToken);
+		}
+	}, []);
 
 	useEffect(() => {
-		if(message instanceof ListChatRoomMessage){
-			let chatroomlist:ChatRoom[] = message.chatroomlist;
+		if (message instanceof ListChatRoomMessage) {
+			let chatroomlist: ChatRoom[] = message.chatroomlist;
 			setchatroomList(chatroomlist);
 		}
-		if(message instanceof CreateChatRoomSuccessMessage){
+		if (message instanceof CreateChatRoomSuccessMessage) {
 			alert("Create Chat Room Success");
-			if(authToken){
-				socket?.send("/chatroom/list","{}","POST",authToken);
+			if (authToken) {
+				socket?.send("/chatroom/list", "{}", "POST", authToken);
 			}
 		}
-		if(message instanceof CreateChatRoomFailedMessage){
+		if (message instanceof CreateChatRoomFailedMessage) {
 			alert("Create Chat Room Failed");
 		}
-		if(message instanceof JoinChatRoomSuccessMessage){
+		if (message instanceof JoinChatRoomSuccessMessage) {
 			alert("Join Chat Room Success");
-			if(authToken){
-				socket?.send("/chatroom/list","{}","POST",authToken);
+			if (authToken) {
+				socket?.send("/chatroom/list", "{}", "POST", authToken);
 			}
 		}
-		if(message instanceof JoinChatRoomFailedMessage){
+		if (message instanceof JoinChatRoomFailedMessage) {
 			alert("Join Chat Room Failed");
 		}
 	}, [message]);
 
 	return (
-		<div className='h-screen'>
+		<div className='h-screen bg-base-200'>
 			<div className='flex flex-col items-center h-full'>
-				<p className="m-10 text-3xl">Chat Room List</p>
-                <div className='flex justify-center'>
+				<p className='m-10 text-3xl'>Chat Room List</p>
+				<div className='flex justify-center'>
 					<div className='flex justify-center'>
-						{ChatroomList.map((chatroom, i) => (
-							<div className='p-4 mx-3 bg-gray-100'>
-								<div className='flex flex-row items-start'>
-									<div>
-									<p className='flex flex-col items-start'>chatroom {i}</p>
-									<p className='py-1 pr-2'>ID: {chatroom.id}</p>
-									<p className='py-1 pr-2'>Name: {chatroom.name}</p>
-									<p className='py-1 pr-2'>Users:</p>
-									{chatroom.usernames.map((us,j)=>(
-										<p className='py-1 pr-2'> {us} </p>
-									))}
-									</div>
+						{ChatroomList.map(({ name, id, usernames }, i) => (
+							<div className='bg-white shadow-md w-60 card hover:cursor-pointer'>
+								<div className='overflow-hidden card-body'>
+									<p className='card-title'>
+										{name} (id:{id})
+									</p>
+
+									<p className='py-1 font-bold'>{usernames.length} users:</p>
+									{usernames.join(", ")}
 								</div>
 							</div>
 						))}
 					</div>
-			    </div>
-                <div>
-				<div className="flex flex-col items-center m-5">
-					<label htmlFor='username' className='text-xl label'>
-						Create:
-					</label>
-					<input id='addfriend' className='input input-bordered' type='text' onChange={oncreateChatRoomChange}/>
 				</div>
                 <div className='m-10 btn btn-accent btn-wide' onClick={CREATE}>
 					Create
@@ -128,20 +129,19 @@ function ChatMenu() {
 				<div className='m-10 btn btn-accent btn-wide' onClick={ENTER}>
 					Enter
 				</div>
-				<div className="flex flex-col items-center">
+				<div className='m-10 btn btn-accent btn-wide'>Enter</div>
+				<div className='flex flex-col items-center'>
 					<label htmlFor='username' className='text-xl label'>
 						Join:
 					</label>
-					<input id='password' className='input input-bordered' type='text' onChange={onjoinChatRoomChange}/>
+					<input id='password' className='input input-bordered' type='text' onChange={onjoinChatRoomChange} />
 				</div>
 				<div className='m-10 btn btn-accent btn-wide' onClick={JOIN}>
 					Join
 				</div>
-                <Link href='/home'>
+				<Link href='/home'>
 					<div className='btn btn-wide'>BACK</div>
 				</Link>
-			</div>
-
 		</div>
 	);
 }

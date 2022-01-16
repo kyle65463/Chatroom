@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReceiveMessage extends StateAction {
+public class GetChatHistories extends StateAction {
     public void perform(ClientState state, Auth auth, HttpSender sender, HttpReceiver receiver) {
         Map<String, String> params = new HashMap<>();
         params.put("id", state.chatroomId);
@@ -28,13 +28,18 @@ public class ReceiveMessage extends StateAction {
                 if(response.status == 200) {
                     List<Map<Object, String>> messages = (List<Map<Object, String>>) response.body.get("messages");
                     for(Map<Object, String> chatMessage : messages) {
-                        System.out.printf("%s");
-                        if(chatMessage.get("type").equals("text")) {
-                            System.out.println();
+                        String type = chatMessage.get("type");
+                        System.out.printf(chatMessage.get("sender") + ": ");
+                        if(type.equals("text")) {
+                            System.out.println(chatMessage.get("content"));
+                        }
+                        else {
+                            String id = chatMessage.get("id");
+                            String filename = chatMessage.get("filename");
+                            System.out.println("<" + type + ": "  + filename + ">" + "(id=" + id + ")");
+
                         }
                     }
-                    System.out.println(response.body);
-                    System.out.println("RECEIVE OK");
                 }
                 else {
                     // Request failed
