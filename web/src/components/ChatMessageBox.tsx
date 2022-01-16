@@ -28,7 +28,7 @@ function ChatMessageBox({ user, chatMessage, onDownloadFile }: Props) {
 				<p className={`font-semibold pb-0.5`}>{sender}:</p>
 				<div
 					className={`bg-white shadow card card-compact ${canDownload ? "hover:cursor-pointer" : ""}`}
-					onClick={() => onDownloadFile(chatMessage)}
+					onClick={canDownload ? () => onDownloadFile(chatMessage) : () => {}}
 				>
 					<div className={`mx-4 my-2 overflow-hidden ${canDownload ? "font-bold text-primary" : ""}`}>
 						{displayContent}

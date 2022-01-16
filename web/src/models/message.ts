@@ -2,7 +2,7 @@ import { decode } from "base64-arraybuffer";
 import { ChatMessage } from "./chatmessage";
 import { ChatRoom, Friend, User } from "./user";
 
-interface Header {
+export interface Header {
 	key: string;
 	value: string;
 }
@@ -16,20 +16,24 @@ export abstract class Message {
 	public header: Header[];
 	public body: any;
 
-	public static parse(message: MessageEvent<any>): Message {
-		const lines = (message.data as string).split("\r\n");
+	public static parseHeader(data: string) {
+		const lines = data.split("\r\n");
 		const bodyIndex = lines.findIndex((e) => e == "") + 1;
-		const rawBody = lines[bodyIndex];
-		let body;
-		try {
-			body = JSON.parse(rawBody);
-		} catch (e) {
-			body = rawBody;
-		}
 		const status = parseInt(lines[0].split(" ")[1]);
 		const headers = lines
 			.slice(1, bodyIndex - 1)
 			.map((line) => ({ key: line.split(": ", 2)[0], value: line.split(": ", 2)[1] }));
+		const rawBody = lines[bodyIndex];
+		return { headers, rawBody, status };
+	}
+
+	public static parse(status: number, headers: Header[], rawBody: string): Message {
+		let body: any = {};
+		try {
+			body = JSON.parse(rawBody);
+		} catch (e) {
+			rawBody = rawBody;
+		}
 		const path = headers.find((e) => e.key === "Path")?.value;
 		if (!path) return new ErrorMessage();
 

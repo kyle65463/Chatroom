@@ -34,8 +34,7 @@ public class WebServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        System.out.println("recv");
-//        System.out.println("Message from client: " + message);
+        System.out.println("Message from web\n" + message);
         ToServer.print(message);
         ToServer.flush();
     }

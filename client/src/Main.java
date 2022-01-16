@@ -25,7 +25,7 @@ public class Main {
         String input = Scanner.instance.nextLine();
 
 //        System.out.println("the input is "+input);
-        Thread client = new Thread(new Runnable(){
+        Thread client = new Thread(new Runnable() {
             @Override
             public void run() {
 //                String serverIp = args[0];
@@ -36,10 +36,10 @@ public class Main {
         }, "Thread-client");
 
 
-        Thread web = new Thread(new Runnable(){
+        Thread web = new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     ///Client <-> Server
                     Socket clientToServerSocket = new Socket(serverIp, port);
                     PrintWriter csSend = new PrintWriter(clientToServerSocket.getOutputStream());
@@ -47,42 +47,47 @@ public class Main {
                     ///Web <-> Client
                     boolean valid = true;
                     int webport = 12200;
-                    try{
+                    try {
                         webport = Integer.parseInt(input);
-                    }catch(NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         valid = false;
                     }
-                    WebServer webSocketServer = new WebServer(csSend,valid,webport);
+                    WebServer webSocketServer = new WebServer(csSend, valid, webport);
                     webSocketServer.start();
                     WebSocket web = null;
-                    while(web == null){
+                    while (web == null) {
                         web = webSocketServer.ReturnWebSocket();
                     }
 
                     /// message exchange
-                    while(true){
-                        if(web.isClosed()){
+                    while (true) {
+                        if (web.isClosed()) {
                             web = null;
-                            while(web == null){
+                            while (web == null) {
                                 web = webSocketServer.ReturnWebSocket();
                             }
                         }
-                        if(csRead.ready()){
+                        if (csRead.ready()) {
                             String message = "";
                             int value = 0;
-                            while( (csRead.ready()) && ((value = csRead.read()) != -1)) {
+                            int chunkSize = 10000;
+                            int numRead = 0;
+                            while ((csRead.ready()) && ((value = csRead.read()) != -1)) {
                                 char c = (char) value;
                                 message += Character.toString(c);
+                                numRead++;
+                                if(numRead > chunkSize) {
+                                    break;
+                                }
                             }
-//                            System.out.println(message.toString());
-                            if(!web.isClosed()) {
-                                try{
+                            if (!web.isClosed()) {
+                                try {
                                     web.send(message.toString());
-                                }catch(Exception a){
+                                } catch (Exception a) {
                                     System.out.println("Exception a");
                                     a.printStackTrace();
                                     web = null;
-                                    while(web == null){
+                                    while (web == null) {
                                         web = webSocketServer.ReturnWebSocket();
                                     }
                                     web.send(message.toString());
@@ -92,7 +97,7 @@ public class Main {
                     }
 
 
-                }catch(IOException e) {
+                } catch (IOException e) {
                     System.out.println("IOException");
                     e.printStackTrace();
                 } catch (Exception e) {

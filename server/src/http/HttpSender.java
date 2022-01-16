@@ -38,8 +38,13 @@ public class HttpSender {
                         "Content-Length: " + body.length() + "\r\n" +
                         (authToken.length() > 0 ? "Authorization: " + authToken + "\r\n" : "") +
                         "\r\n";
-        System.out.println(header + body);
-        os.print(header + body);
+        os.print(header);
+        int offset = 0;
+        int chunkSize = 10000;
+        while(offset < body.length()) {
+            os.print(body.substring(offset, Math.min(offset + chunkSize, body.length())));
+            offset += chunkSize;
+        }
         os.flush();
     }
 
@@ -47,7 +52,13 @@ public class HttpSender {
         String message = status == 200 ? "OK" : status == 400 ? "Bad Request" : "Server Error";
         String header = "HTTP/1.1 " + status + " " + message +"/1.1\r\n" + "Path: "+ path + "\r\n"
                 + "Host: localhost\r\nContent-Length: " + body.length() + "\r\n" + "\r\n";
-        os.print(header + body);
+        os.print(header);
+        int offset = 0;
+        int chunkSize = 10000;
+        while(offset < body.length()) {
+            os.print(body.substring(offset, Math.min(offset + chunkSize, body.length())));
+            offset += chunkSize;
+        }
         os.flush();
     }
 

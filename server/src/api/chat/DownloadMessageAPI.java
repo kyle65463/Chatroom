@@ -31,18 +31,23 @@ public class DownloadMessageAPI extends API {
             return;
         }
 
+
         try {
+            System.out.println("abc");
             byte[] file = database.downloadFile(type, messageId);
             String fileStr = Base64.getEncoder().encodeToString(file);
+            System.out.println("get file success");
             Map<String, Object> output = new HashMap<>();
             output.put("file", fileStr);
             output.put("filename", filename);
             output.put("type", type);
-            sender.response(200, request.path,JsonUtils.toJson(output));
+            System.out.println(fileStr.length());
+            sender.response(200, request.path, JsonUtils.toJson(output));
         } catch (Exception e) {
+            e.printStackTrace();
             Map<String, String> output = new HashMap<>();
             output.put("error", e.getMessage());
-            sender.response(400, request.path,JsonUtils.toJson(output));
+            sender.response(400, request.path, JsonUtils.toJson(output));
         }
     }
 }
