@@ -1,4 +1,3 @@
-import { route } from "next/dist/server/router";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
@@ -13,15 +12,12 @@ import {
 import { ChatRoom } from "../models/user";
 
 function ChatMenu() {
-	const { socket, authToken ,message, user,setChatRoom } = useContext(SocketContext);
+	const { socket, authToken, message, user, setChatRoom } = useContext(SocketContext);
 
 	const router = useRouter();
-
-    const [ChatroomList, setchatroomList] = useState<ChatRoom[]>([]);
+	const [chatroomList, setchatroomList] = useState<ChatRoom[]>([]);
 	const [createChatRoom, setcreateChatRoom] = useState("");
 	const [joinChatRoom, setjoinChatRoom] = useState("");
-	const [enterChatRoom, setEnterChatRoom] = useState(-1);
-
 
 	const oncreateChatRoomChange = (e: any) => {
 		setcreateChatRoom(e.target.value);
@@ -31,14 +27,10 @@ function ChatMenu() {
 		setjoinChatRoom(e.target.value);
 	};
 
-	const onenterChatRoomChange = (e: any) => {
-		setEnterChatRoom(e.target.value);
-	};
-
-	const CREATE = () =>{
-		const body: string = JSON.stringify({name:createChatRoom});
-		if(authToken){
-			socket?.send("/chatroom/create",body,"POST",authToken);
+	const CREATE = () => {
+		const body: string = JSON.stringify({ name: createChatRoom });
+		if (authToken) {
+			socket?.send("/chatroom/create", body, "POST", authToken);
 		}
 	};
 
@@ -47,23 +39,22 @@ function ChatMenu() {
 		if (authToken) {
 			socket?.send("/chatroom/user/add", body, "POST", authToken);
 		}
-	}
+	};
 
-	const ENTER = () =>{
-		if(enterChatRoom < 0 || enterChatRoom >= ChatroomList.length){
+	const ENTER = (index: number) => {
+		if (index < 0 || index >= chatroomList.length) {
 			alert("Chat Room Nonexist");
-		}else{
-			let enterchat:ChatRoom = ChatroomList[enterChatRoom];
-			setChatRoom(enterchat);
-			router.push("/chat");	
+		} else {
+			setChatRoom(chatroomList[index]);
+			router.push("/chat");
 		}
-	}
+	};
 
-	useEffect(()=>{
-        if(authToken){
-            socket?.send("/chatroom/list","{}","POST",authToken);
-        }
-    },[])
+	useEffect(() => {
+		if (authToken) {
+			socket?.send("/chatroom/list", "{}", "POST", authToken);
+		}
+	}, []);
 
 	useEffect(() => {
 		if (authToken) {
@@ -102,8 +93,8 @@ function ChatMenu() {
 				<p className='mb-10 text-3xl font-bold'>Chat Room List</p>
 				<div className='flex justify-center'>
 					<div className='flex justify-center'>
-						{ChatroomList.map(({ name, id, usernames }, i) => (
-							<div className='bg-white shadow-md w-60 card hover:cursor-pointer'>
+						{chatroomList.map(({ name, id, usernames }, i) => (
+							<div className='bg-white shadow-md w-60 card hover:cursor-pointer' onClick={() => ENTER(i)}>
 								<div className='overflow-hidden card-body'>
 									<p className='card-title'>
 										{name} (id:{id})
@@ -116,32 +107,33 @@ function ChatMenu() {
 						))}
 					</div>
 				</div>
-                <div className='m-10 btn btn-accent btn-wide' onClick={CREATE}>
+				<div className='flex flex-col items-center mt-10'>
+					<label htmlFor='username' className='text-xl label'>
+						New room's name:
+					</label>
+					<input
+						id='password'
+						className='input input-bordered'
+						type='text'
+						onChange={oncreateChatRoomChange}
+					/>
+				</div>
+				<div className='my-5 btn btn-accent btn-wide' onClick={CREATE}>
 					Create
 				</div>
-				<div className="flex flex-col items-center">
-					<label htmlFor='username' className='text-xl label'>
-						Enter:
-					</label>
-					<input id='password' className='input input-bordered' type='text' onChange={onenterChatRoomChange}/>
-				</div>
-				</div>
-				<div className='m-10 btn btn-accent btn-wide' onClick={ENTER}>
-					Enter
-				</div>
-				<div className='m-10 btn btn-accent btn-wide'>Enter</div>
 				<div className='flex flex-col items-center'>
 					<label htmlFor='username' className='text-xl label'>
-						Join:
+						Existing room's id:
 					</label>
 					<input id='password' className='input input-bordered' type='text' onChange={onjoinChatRoomChange} />
 				</div>
-				<div className='m-10 btn btn-accent btn-wide' onClick={JOIN}>
+				<div className='mt-5 mb-5 btn btn-accent btn-wide' onClick={JOIN}>
 					Join
 				</div>
 				<Link href='/home'>
 					<div className='btn btn-wide'>BACK</div>
 				</Link>
+			</div>
 		</div>
 	);
 }
