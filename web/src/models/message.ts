@@ -1,3 +1,4 @@
+import { ChatMessage } from "./chatmessage";
 import { ChatRoom, Friend, User } from "./user";
 
 interface Header {
@@ -19,9 +20,9 @@ export abstract class Message {
 		const bodyIndex = lines.findIndex((e) => e == "") + 1;
 		const rawBody = lines[bodyIndex];
 		let body;
-		try{
+		try {
 			body = JSON.parse(rawBody);
-		}catch(e){
+		} catch (e) {
 			body = rawBody;
 		}
 		const status = parseInt(lines[0].split(" ")[1]);
@@ -30,7 +31,7 @@ export abstract class Message {
 			.map((line) => ({ key: line.split(": ", 2)[0], value: line.split(": ", 2)[1] }));
 		const path = headers.find((e) => e.key === "Path")?.value;
 		if (!path) return new ErrorMessage();
-		// console.log(path);
+
 		if (status === 200) {
 			// Success
 			if (path === "/login") {
@@ -45,17 +46,20 @@ export abstract class Message {
 			if (path === "/friend/add") {
 				return new AddFriendSuccessMessage(headers, body);
 			}
-			if (path === "/friend/delete"){
+			if (path === "/friend/delete") {
 				return new DeleteFriendSuccessMessage(headers, body);
 			}
-			if (path === "/chatroom/list"){
+			if (path === "/chatroom/list") {
 				return new ListChatRoomMessage(headers, body);
 			}
-			if (path === "/chatroom/create"){
-				return new CreateChatRoomSuccessMessage(headers,body);
+			if (path === "/chatroom/create") {
+				return new CreateChatRoomSuccessMessage(headers, body);
 			}
-			if (path === "/chatroom/user/add"){
-				return new JoinChatRoomSuccessMessage(headers,body);
+			if (path === "/chatroom/user/add") {
+				return new JoinChatRoomSuccessMessage(headers, body);
+			}
+			if (path === "/chat/histories") {
+				return new GetChatHistoriesSuccessMessage(headers, body);
 			}
 		} else {
 			// Fail
@@ -68,21 +72,24 @@ export abstract class Message {
 			if (path == "/friend/add") {
 				return new AddFriendFailedMessage(headers, body);
 			}
-			if (path === "/friend/delete"){
+			if (path === "/friend/delete") {
 				return new DeleteFriendFailedMessage(headers, body);
 			}
-			if (path === "/chatroom/create"){
-				return new CreateChatRoomFailedMessage(headers,body);
+			if (path === "/chatroom/create") {
+				return new CreateChatRoomFailedMessage(headers, body);
 			}
-			if (path === "/chatroom/user/add"){
-				return new JoinChatRoomFailedMessage(headers,body);
+			if (path === "/chatroom/user/add") {
+				return new JoinChatRoomFailedMessage(headers, body);
+			}
+			if (path === "/chat/histories") {
+				return new GetChatHistoriesFailedMessage(headers, body);
 			}
 		}
 		return new ErrorMessage();
 	}
 }
 
-export class NullMessage extends Message{
+export class NullMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
@@ -117,15 +124,12 @@ export class RegisterFailedMessage extends Message {
 	}
 }
 
-
-
-
 export class ListFriendMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 		this.friendList = body.friends;
 	}
-	public friendList:Friend[];
+	public friendList: Friend[];
 }
 
 export class AddFriendSuccessMessage extends Message {
@@ -157,36 +161,49 @@ export class ListChatRoomMessage extends Message {
 		super(header, body);
 		this.chatroomlist = body.chatrooms;
 	}
-	public chatroomlist:ChatRoom[];
+	public chatroomlist: ChatRoom[];
 }
 
-export class CreateChatRoomSuccessMessage extends Message{
+export class CreateChatRoomSuccessMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
 }
 
-export class CreateChatRoomFailedMessage extends Message{
+export class CreateChatRoomFailedMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
 }
 
-export class JoinChatRoomSuccessMessage extends Message{
+export class JoinChatRoomSuccessMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
 }
 
-
-export class JoinChatRoomFailedMessage extends Message{
+export class JoinChatRoomFailedMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}
 }
 
+export class GetChatHistoriesSuccessMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+		this.isLast = body.isLast;
+		this.messages = body.messages;
+	}
 
+	public isLast: boolean;
+	public messages: ChatMessage[];
+}
 
+export class GetChatHistoriesFailedMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
 
 export class ErrorMessage extends Message {
 	constructor() {

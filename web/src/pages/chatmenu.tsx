@@ -57,12 +57,6 @@ function ChatMenu() {
 	}, []);
 
 	useEffect(() => {
-		if (authToken) {
-			socket?.send("/chatroom/list", "{}", "POST", authToken);
-		}
-	}, []);
-
-	useEffect(() => {
 		if (message instanceof ListChatRoomMessage) {
 			let chatroomlist: ChatRoom[] = message.chatroomlist;
 			setchatroomList(chatroomlist);
