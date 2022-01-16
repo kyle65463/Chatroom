@@ -22,7 +22,7 @@ function ChatMessageBox({ user, chatMessage }: Props) {
 	return (
 		<div className='py-2'>
 			<p className='font-semibold pb-0.5'>{sender}:</p>
-			<div className='bg-white shadow card hover:cursor-pointer card-compact'>
+			<div className='bg-white shadow card card-compact'>
 				<div className='mx-4 my-2 overflow-hidden'>{displayContent}</div>
 			</div>
 		</div>

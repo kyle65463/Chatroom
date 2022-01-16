@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import ChatMessageBox from "../components/ChatMessageBox";
 import { SocketContext } from "../context/context";
@@ -23,26 +22,40 @@ function Home() {
 	}, []);
 
 	return (
-		<div className='min-h-screen p-20 bg-base-200'>
-			<div className='flex flex-col items-center h-full'>
-				<p className='mb-10 text-3xl font-bold'>Chat Room List</p>
-				<div className='flex justify-center'>
-					<div className='flex flex-col justify-center'>
-						{chatMessages.map((chatMessage, i) => (
-							<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
-						))}
+		<div className='h-screen bg-base-200'>
+			<div className='flex flex-row justify-between h-screen'>
+				<div className='flex py-14 flex-[3.7] pl-60 flex-col pr-10'>
+					{/* Messages */}
+					<p className='text-3xl font-bold'>{chatroom?.name}</p>
+					<div className='flex justify-center overflow-y-scroll h-[85%]'>
+						<div className='flex flex-col justify-center'>
+							{chatMessages.map((chatMessage, i) => (
+								<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
+							))}
+							{chatMessages.map((chatMessage, i) => (
+								<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
+							))}
+							{chatMessages.map((chatMessage, i) => (
+								<ChatMessageBox user={user} chatMessage={chatMessage} key={i} />
+							))}
+						</div>
+					</div>
+
+					{/* Input field */}
+					<div className='flex flex-row items-center w-full bottom-[10%]'>
+						<input id='message' className='mr-3 flex-[7] input input-bordered' type='text' />
+						<div className='flex-1 mt-5 mb-5 btn btn-accent'>SEND</div>
 					</div>
 				</div>
-				<div className='flex flex-col items-center'>
-					<label htmlFor='username' className='text-xl label'>
-						Existing room's id:
-					</label>
-					<input id='password' className='input input-bordered' type='text' />
+				<div className='flex-1 bg-gray-200'>
+					{/* Users */}
+					<p className='px-6 mb-4 text-xl font-bold pt-7'>Users</p>
+					{chatroom?.usernames.map((name, i) => (
+						<div className='mx-6 my-3 bg-white card' key={i}>
+							<p className='px-4 py-2 text-lg card-body'>{name}</p>
+						</div>
+					))}
 				</div>
-				<div className='mt-5 mb-5 btn btn-accent btn-wide'>Join</div>
-				<Link href='/chatmenu'>
-					<div className='btn btn-wide'>BACK</div>
-				</Link>
 			</div>
 		</div>
 	);
