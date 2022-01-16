@@ -10,17 +10,19 @@ import java.util.Set;
 
 public class WebServer extends WebSocketServer {
 
-    private static int TCP_PORT = 12200;
+//    private static int TCP_PORT=12200;
 
 //    private Set<WebSocket> conns;
     public PrintWriter ToServer;
-    public BufferedReader FromServer;
     public WebSocket web;
 
-    public WebServer(PrintWriter pw,BufferedReader br) throws IOException {
-        super(new InetSocketAddress(TCP_PORT));
+
+
+    public WebServer(PrintWriter pw,boolean valid,int port) throws IOException {
+        super(new InetSocketAddress(port));
+//        super(new InetSocketAddress((valid)?port:TCP_PORT));
+        System.out.println("Client Web port = " + port);
         ToServer = pw;
-        FromServer = br;
 //        conns = new HashSet<>();
     }
     public WebSocket ReturnWebSocket(){

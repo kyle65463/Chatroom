@@ -22,8 +22,9 @@ public class Main {
         }
         String serverIp = args[0];
         int port = Integer.parseInt(args[1]);
-        Scanner.instance.nextLine();
+        String input = Scanner.instance.nextLine();
 
+//        System.out.println("the input is "+input);
         Thread client = new Thread(new Runnable(){
             @Override
             public void run() {
@@ -44,7 +45,14 @@ public class Main {
                     PrintWriter csSend = new PrintWriter(clientToServerSocket.getOutputStream());
                     BufferedReader csRead = new BufferedReader(new InputStreamReader(clientToServerSocket.getInputStream()));
                     ///Web <-> Client
-                    WebServer webSocketServer = new WebServer(csSend,csRead);
+                    boolean valid = true;
+                    int webport = 12200;
+                    try{
+                        webport = Integer.parseInt(input);
+                    }catch(NumberFormatException e){
+                        valid = false;
+                    }
+                    WebServer webSocketServer = new WebServer(csSend,valid,webport);
                     webSocketServer.start();
                     WebSocket web = null;
                     while(web == null){
@@ -53,7 +61,7 @@ public class Main {
 
                     /// message exchange
                     while(true){
-                        if(web.isClosed() || !web.isConnecting()){
+                        if(web.isClosed()){
                             web = null;
                             while(web == null){
                                 web = webSocketServer.ReturnWebSocket();
@@ -68,7 +76,17 @@ public class Main {
                             }
                             System.out.println(message.toString());
                             if(!web.isClosed()) {
-                                web.send(message.toString());
+                                try{
+                                    web.send(message.toString());
+                                }catch(Exception a){
+                                    System.out.println("Exception a");
+                                    a.printStackTrace();
+                                    web = null;
+                                    while(web == null){
+                                        web = webSocketServer.ReturnWebSocket();
+                                    }
+                                    web.send(message.toString());
+                                }
                             }
                         }
                     }
