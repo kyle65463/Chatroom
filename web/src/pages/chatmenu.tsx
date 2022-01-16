@@ -1,17 +1,20 @@
+import { route } from "next/dist/server/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/context";
 import { CreateChatRoomFailedMessage, CreateChatRoomSuccessMessage, JoinChatRoomFailedMessage, JoinChatRoomSuccessMessage, ListChatRoomMessage } from "../models/message";
 import { ChatRoom } from "../models/user";
 
 function ChatMenu() {
-	const { socket, authToken ,message, user } = useContext(SocketContext);
+	const { socket, authToken ,message, user,setChatRoom } = useContext(SocketContext);
 
-	let nullchatroomlist:ChatRoom[] = [];
-    const [ChatroomList, setchatroomList] = useState(nullchatroomlist);
+	const router = useRouter();
+
+    const [ChatroomList, setchatroomList] = useState<ChatRoom[]>([]);
 	const [createChatRoom, setcreateChatRoom] = useState("");
 	const [joinChatRoom, setjoinChatRoom] = useState("");
-	
+	const [enterChatRoom, setEnterChatRoom] = useState(-1);
 
 
 	const oncreateChatRoomChange = (e: any) => {
@@ -20,6 +23,10 @@ function ChatMenu() {
 
 	const onjoinChatRoomChange = (e: any) => {
 		setjoinChatRoom(e.target.value);
+	};
+
+	const onenterChatRoomChange = (e: any) => {
+		setEnterChatRoom(e.target.value);
 	};
 
 	const CREATE = () =>{
@@ -33,6 +40,16 @@ function ChatMenu() {
 		const body: string = JSON.stringify({id:joinChatRoom,username:user?.username});
 		if(authToken){
 			socket?.send("/chatroom/user/add",body,"POST",authToken);
+		}
+	}
+
+	const ENTER = () =>{
+		if(enterChatRoom < 0 || enterChatRoom >= ChatroomList.length){
+			alert("Chat Room Nonexist");
+		}else{
+			let enterchat:ChatRoom = ChatroomList[enterChatRoom];
+			setChatRoom(enterchat);
+			router.push("/chat");	
 		}
 	}
 
@@ -105,10 +122,10 @@ function ChatMenu() {
 					<label htmlFor='username' className='label text-xl'>
 						Enter:
 					</label>
-					<input id='password' className='input input-bordered' type='text'/>
+					<input id='password' className='input input-bordered' type='text' onChange={onenterChatRoomChange}/>
 				</div>
 				</div>
-				<div className='m-10 btn btn-accent btn-wide'>
+				<div className='m-10 btn btn-accent btn-wide' onClick={ENTER}>
 					Enter
 				</div>
 				<div className="flex flex-col items-center">

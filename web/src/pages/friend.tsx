@@ -7,8 +7,8 @@ import {Friend} from "../models/user";
 function Friend() {
 	const { socket, authToken ,message, setMessage, user } = useContext(SocketContext);
     // socket?.send(friend);
-    let nullfriend:Friend[] = [];
-    const [friendList, setfriendList] = useState(nullfriend);
+
+    const [friendList, setfriendList] = useState<Friend[]>([]);
     const [addfriend, setAddFriend] = useState("");
 	const [deletefriend, setDeleteFriend] = useState("");
 
