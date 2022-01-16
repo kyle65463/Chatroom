@@ -67,13 +67,8 @@ public class Main {
                                 message += Character.toString(c);
                             }
                             System.out.println(message.toString());
-                            try{
-                                if(web.isConnecting()) {
-                                    web.send(message.toString());
-                                }
-                            }catch(Exception a){
-                                System.out.println("Exception a");
-                                a.printStackTrace();
+                            if(!web.isClosed()) {
+                                web.send(message.toString());
                             }
                         }
                     }
