@@ -97,9 +97,9 @@ function ChatMenu() {
 	}, [message]);
 
 	return (
-		<div className='h-screen bg-base-200'>
+		<div className='min-h-screen p-20 bg-base-200'>
 			<div className='flex flex-col items-center h-full'>
-				<p className='m-10 text-3xl'>Chat Room List</p>
+				<p className='mb-10 text-3xl font-bold'>Chat Room List</p>
 				<div className='flex justify-center'>
 					<div className='flex justify-center'>
 						{ChatroomList.map(({ name, id, usernames }, i) => (
