@@ -10,7 +10,7 @@ function Home() {
 	useEffect(() => {}, [message]);
     useEffect(()=>{
         if(authToken){
-			const body: string = JSON.stringify({id:chatroom?.id,limit:1});
+			const body: string = JSON.stringify({id:chatroom?.id,limit:"1"});
             socket?.send("/chat/histories",body,"POST",authToken);
         }
     },[])
