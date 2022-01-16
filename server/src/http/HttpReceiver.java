@@ -36,12 +36,12 @@ public class HttpReceiver {
             line = is.readLine();
         }
         int contentLength = Integer.parseInt(header.get("Content-Length"));
-        if(contentLength > 0){
-            char[] buffer = new char[contentLength];
-            is.read(buffer, 0, contentLength);
-            String body = String.valueOf(buffer);
-            return HttpMessage.parse(startLine, header, body);
+        char[] buffer = new char[contentLength];
+        int offset = 0;
+        while(offset < contentLength){
+            offset += is.read(buffer, offset, contentLength - offset);
         }
-        return null;
+        String body = String.valueOf(buffer);
+        return HttpMessage.parse(startLine, header, body);
     }
 }
