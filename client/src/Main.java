@@ -53,7 +53,7 @@ public class Main {
 
                     /// message exchange
                     while(true){
-                        if(web.isClosed() || !web.isConnecting()){
+                        if(web.isClosed()){
                             web = null;
                             while(web == null){
                                 web = webSocketServer.ReturnWebSocket();
@@ -68,7 +68,17 @@ public class Main {
                             }
                             System.out.println(message.toString());
                             if(!web.isClosed()) {
-                                web.send(message.toString());
+                                try{
+                                    web.send(message.toString());
+                                }catch(Exception a){
+                                    System.out.println("Exception a");
+                                    a.printStackTrace();
+                                    web = null;
+                                    while(web == null){
+                                        web = webSocketServer.ReturnWebSocket();
+                                    }
+                                    web.send(message.toString());
+                                }
                             }
                         }
                     }
