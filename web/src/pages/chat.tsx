@@ -1,3 +1,5 @@
+import { encode } from "base64-arraybuffer";
+import imageType from "image-type";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ChatMessageBox from "../components/ChatMessageBox";
@@ -11,6 +13,7 @@ function Home() {
 	const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 	const [textMessage, setTextMessage] = useState("");
 	const textInputRef = useRef<HTMLInputElement>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (message instanceof GetChatHistoriesSuccessMessage) {
@@ -43,9 +46,31 @@ function Home() {
 
 	const onSendFileMessage = () => {
 		// Send a file message
-		if (authToken) {
-			const body = JSON.stringify({ id: chatroom?.id, type: "text", content: textMessage });
-			socket?.send("/chat/send", body, "POST", authToken);
+		if (authToken && fileInputRef.current) {
+			fileInputRef.current.click();
+			// const body = JSON.stringify({ id: chatroom?.id, type: "text", content: textMessage });
+			// socket?.send("/chat/send", body, "POST", authToken);
+		}
+	};
+
+	const onUploadFileChange = (event: any) => {
+		const file: File = event.target.files[0];
+		if (file && fileInputRef.current && authToken) {
+			const reader = new FileReader();
+			reader.readAsArrayBuffer(file);
+			reader.onloadend = (event: any) => {
+				const result: ArrayBuffer = event.target.result;
+				const isImage = imageType(new Uint8Array(result));
+				const base64 = encode(result);
+				const body = {
+					id: chatroom?.id,
+					type: isImage ? "image" : "file",
+					filename: file.name,
+					content: base64,
+				};
+				alert("Uploading file...");
+				socket?.send("/chat/send", JSON.stringify(body), "POST", authToken);
+			};
 		}
 	};
 
@@ -107,6 +132,13 @@ function Home() {
 								R
 							</div>
 						</div>
+						<input
+							type='file'
+							id='file'
+							ref={fileInputRef}
+							className='hidden'
+							onChange={onUploadFileChange}
+						/>
 					</div>
 				</div>
 				<div className='flex-1 bg-gray-200'>
