@@ -110,7 +110,7 @@ function Home() {
 	const onRefresh = () => {
 		if (authToken) {
 			const body = JSON.stringify({ id: chatroom?.id, limit: "1" });
-			// socket?.send("/chat/histories", body, "POST", authToken);
+			socket?.send("/chat/histories", body, "POST", authToken);
 		}
 	};
 
@@ -126,7 +126,7 @@ function Home() {
 						</div>
 					</div>
 
-					<div className='flex justify-center overflow-y-scroll h-[84%]'>
+					<div className='overflow-y-scroll h-[84%]'>
 						<div className='flex flex-col justify-center'>
 							{chatMessages.map((chatMessage, i) => (
 								<ChatMessageBox
@@ -140,7 +140,7 @@ function Home() {
 					</div>
 
 					{/* Input field */}
-					<div className='mt-5 flex flex-row items-center w-full bottom-[10%]'>
+					<div className='mt-5 pl-20 flex flex-row items-center w-full bottom-[10%]'>
 						<input
 							id='message'
 							className='mr-3 flex-[6] input input-bordered'
