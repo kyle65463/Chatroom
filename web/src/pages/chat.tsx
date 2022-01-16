@@ -5,7 +5,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import ChatMessageBox from "../components/ChatMessageBox";
 import { SocketContext } from "../context/context";
 import { ChatMessage } from "../models/chatmessage";
-import { DownloadFileSuccessMessage, GetChatHistoriesSuccessMessage } from "../models/message";
+import {
+	DownloadFileSuccessMessage,
+	GetChatHistoriesSuccessMessage,
+	SendMessageSuccessMessage,
+} from "../models/message";
 
 export function createAndDownloadFile(body: ArrayBuffer, filename: string) {
 	const blob = new Blob([body]);
@@ -28,6 +32,16 @@ function Home() {
 	const [textMessage, setTextMessage] = useState("");
 	const textInputRef = useRef<HTMLInputElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const messagesEndRef = useRef(null);
+
+	const scrollToBottom = () => {
+		//@ts-ignore
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [chatMessages]);
 
 	useEffect(() => {
 		if (message instanceof GetChatHistoriesSuccessMessage) {
@@ -37,6 +51,9 @@ function Home() {
 			if (message.type === "file") {
 				createAndDownloadFile(decode(message.file), message.filename);
 			}
+		}
+		if (message instanceof SendMessageSuccessMessage) {
+			onRefresh();
 		}
 	}, [message]);
 
@@ -86,7 +103,6 @@ function Home() {
 					content: base64,
 				};
 				socket?.send("/chat/send", JSON.stringify(body), "POST", authToken);
-				alert("Uploading file...");
 			};
 		}
 	};
@@ -100,7 +116,6 @@ function Home() {
 				messageId: message.id,
 			};
 			socket?.send("/chat/download", JSON.stringify(body), "POST", authToken);
-			alert("Downloading file...");
 		}
 	};
 
@@ -139,6 +154,7 @@ function Home() {
 								/>
 							))}
 						</div>
+						<div ref={messagesEndRef} />
 					</div>
 
 					{/* Input field */}
@@ -158,7 +174,20 @@ function Home() {
 								+
 							</div>
 							<div className='ml-2 btn' onClick={onRefresh}>
-								R
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									aria-hidden='true'
+									role='img'
+									width='0.91em'
+									height='1em'
+									preserveAspectRatio='xMidYMid meet'
+									viewBox='0 0 928 1024'
+								>
+									<path
+										d='M449 899v-1l-92-144q-5-8-14-10.5t-18 2.5l-8 5q-8 4-8.5 14t4.5 18l59 92q-2-1-5-1.5t-5.5-1t-4.5-1.5q-52-13-97.5-40T178 765.5T117 680Q45 541 93 392q11-36 29.5-68.5T165 263t53.5-51t63.5-41q11-6 15-18t-2-23.5t-18-15.5t-23 2q-79 41-136.5 107.5T34 373Q7 457 14.5 543.5T62 708q43 83 116 141.5T341 931q1 1 2 1h2l-81 42q-8 4-10.5 13t2.5 17l3 8q11 18 29 9l149-77l10-5q8-5 10.5-14t-2.5-17zm417-578q-43-83-114.5-141.5T590 98q-9-3-26-6l80-40q9-5 12-14t-1-17l-3-8q-3-5-8.5-8T632 2t-12 2L471 81l-10 5q-9 5-11 14t3 17l5 10h1l92 144q5 8 14 10.5t17-2.5l8-5q8-4 9-14t-4-18l-59-92q22 3 38 8q22 6 43 14t40.5 19t37.5 24t34.5 28t31 32t27 35.5T811 349q72 139 24 288q-23 72-71 129t-115 92q-11 6-15 18t2 24q8 17 27 17q8 0 15-4q78-40 134-106.5T894 656q54-167-23-325z'
+										fill='currentColor'
+									/>
+								</svg>
 							</div>
 						</div>
 						<input
@@ -180,6 +209,7 @@ function Home() {
 					))}
 				</div>
 			</div>
+			<script src='https://code.iconify.design/2/2.1.1/iconify.min.js'></script>
 		</div>
 	);
 }

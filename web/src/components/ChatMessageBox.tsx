@@ -50,7 +50,7 @@ function ChatMessageBox({ user, chatMessage, onDownloadFile }: Props) {
 	}, [message]);
 
 	return (
-		<div className={`flex ml-20 max-w-[500px]`}>
+		<div className={`flex ml-20 max-w-[530px]`}>
 			<div className='py-2'>
 				<p className={`font-semibold pb-0.5`}>{sender}:</p>
 				<div

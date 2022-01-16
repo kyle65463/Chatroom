@@ -68,6 +68,9 @@ export abstract class Message {
 			if (path === "/chat/download") {
 				return new DownloadFileSuccessMessage(headers, body);
 			}
+			if (path === "/chat/send") {
+				return new SendMessageSuccessMessage(headers, body);
+			}
 		} else {
 			// Fail
 			if (path === "/login") {
@@ -93,6 +96,9 @@ export abstract class Message {
 			}
 			if (path === "/chat/download") {
 				return new DownloadFileFailedMessage(headers, body);
+			}
+			if (path === "/chat/send") {
+				return new SendMessageFailedMessage(headers, body);
 			}
 		}
 		return new ErrorMessage();
@@ -231,6 +237,18 @@ export class DownloadFileSuccessMessage extends Message {
 }
 
 export class DownloadFileFailedMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
+export class SendMessageSuccessMessage extends Message {
+	constructor(header: Header[], body: any) {
+		super(header, body);
+	}
+}
+
+export class SendMessageFailedMessage extends Message {
 	constructor(header: Header[], body: any) {
 		super(header, body);
 	}

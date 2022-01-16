@@ -88,7 +88,10 @@ function ChatMenu() {
 				<div className='flex justify-center'>
 					<div className='flex justify-center'>
 						{chatroomList.map(({ name, id, usernames }, i) => (
-							<div className='bg-white shadow-md w-60 card hover:cursor-pointer' onClick={() => ENTER(i)}>
+							<div
+								className='mx-2 bg-white shadow-md w-60 card hover:cursor-pointer'
+								onClick={() => ENTER(i)}
+							>
 								<div className='overflow-hidden card-body'>
 									<p className='card-title'>
 										{name} (id:{id})

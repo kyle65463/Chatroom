@@ -74,7 +74,7 @@ function Friend() {
 				<p className='mb-10 text-3xl font-bold'>Friend List</p>
 				<div className='flex justify-center'>
 					{friendList.map(({ username }) => (
-						<div className='bg-white shadow-md w-60 card'>
+						<div className='mx-2 bg-white shadow-md w-60 card'>
 							<div className='overflow-hidden card-body'>
 								<p className='text-xl font-bold'>{username}</p>
 							</div>

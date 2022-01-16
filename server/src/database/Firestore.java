@@ -217,7 +217,7 @@ public class Firestore extends Database {
                 QueryDocumentSnapshot doc = docs.get(0);
                 String historyId = doc.getString("id");
                 List<Map<String, Object>> messages = (List<Map<String, Object>>) doc.get("messages");
-                if(messages.size() > 25) {
+                if(messages.size() > 1000) {
                     // History is too long, create a new one
                     createChatHistory(message.chatroomId, Collections.singletonList(message));
                     ApiFuture<WriteResult> result = db.collection("chatHistories").document(historyId).set(
