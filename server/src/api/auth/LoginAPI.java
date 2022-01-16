@@ -22,6 +22,7 @@ public class LoginAPI extends API {
         Map<String, Object> body = request.body;
         String username = (String) body.get("username");
         String password = (String) body.get("password");
+        String realtime = (String) body.get("realtime");
         if(username == null || password == null) {
             sender.response(400, request.path,"Incorrect request format.");
             return;
@@ -31,7 +32,11 @@ public class LoginAPI extends API {
         try {
             user = database.getUser(username, password);
             String authToken = generateJWTToken(user.username);
-            threadMessenger.setUsername(user.username);
+            System.out.println("Logged in: " + user.username);
+            if(realtime != null &&  realtime.equals("true")){
+                System.out.println("realtime mode");
+                threadMessenger.setUsername(user.username);
+            }
             sender.response(200, request.path,JsonUtils.toJson(new LoginAPIResponse(authToken, user)));
         }
         catch (Exception e) {
