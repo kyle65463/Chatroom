@@ -44,7 +44,7 @@ interface SocketContext {
 	message?: Message;
 	setMessage: (message: Message) => void;
 	chatroom?: ChatRoom;
-	setChatRoom: (chatroom: ChatRoom) => void;
+	setChatRoom: (chatroom?: ChatRoom) => void;
 }
 
 export const SocketContext = React.createContext<SocketContext>({
@@ -56,7 +56,7 @@ export const SocketContext = React.createContext<SocketContext>({
 	setUser: (user: User) => {},
 	setMessage: (message: Message) => {},
 	chatroom: undefined,
-	setChatRoom: (chatroom: ChatRoom) => {},
+	setChatRoom: (chatroom?: ChatRoom) => {},
 });
 
 export const UseSocketContext = () => React.useContext(SocketContext);
