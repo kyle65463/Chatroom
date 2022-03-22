@@ -1,8 +1,9 @@
 # Chatroom
 The final project of NTU Computer Network 2021 Fall
+
 It contains three parts, the server, the console client and the web client.
+
 Demo link: https://www.youtube.com/watch?v=6TdwkyZdIr4&ab_channel=%E8%98%87%E6%B5%9A%E7%AC%99
-Homework slide link: https://docs.google.com/presentation/d/18NSrp3BokNhquQS3Gt9L9wOR21S9uMLpmXfe4JeZVFo/edit#slide=id.gfa25e13531_0_41
 
 ### Author
 kyle65463, misterSu514
